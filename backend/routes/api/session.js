@@ -33,9 +33,14 @@ router.post('/', async (req, res, next) => {
     username: user.username
   };
 
-  await setTokenCookie(res, safeUser)
+  setTokenCookie(res, safeUser)
 
   return res.json({user: safeUser})
+})
+
+router.delete('/', (req, res) => {
+  res.clearCookie('token');
+  return res.json({ message: 'success'})
 })
 
 module.exports = router
