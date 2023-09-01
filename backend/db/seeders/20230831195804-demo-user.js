@@ -19,7 +19,8 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
-    await User.bulkCreate([
+   options.tableName = "Users"
+    await queryInterface.bulkInsert(options, [
       {
         email: 'demo@user.io',
         username: 'Demo-lition',
