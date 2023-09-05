@@ -20,6 +20,7 @@ module.exports = {
     */
    options.tableName = 'EventImages'
    await queryInterface.bulkInsert(options, [{
+    eventId: 1,
     url: 'temp',
     preview: true
    }], {validate: true})

@@ -20,8 +20,7 @@ module.exports = {
     */
    options.tableName = 'Venues'
    await queryInterface.bulkInsert(options, [{
-    //venueId: 1,
-    //groupId: 1,
+    groupId: 1,
     address: 'Insert address',
     city: "Boston",
     state: 'Massachusetts',
@@ -40,8 +39,8 @@ module.exports = {
     options.tableName = 'Venues'
     const Op = Sequelize.Op
     await queryInterface.bulkDelete(options, {
-      name: {
-        [Op.in]: ['Venue1']
+      address: {
+        [Op.in]: ['Insert address']
       }
     }, {})
   }

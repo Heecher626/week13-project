@@ -20,6 +20,7 @@ module.exports = {
     */
    options.tableName = 'GroupImages'
    await queryInterface.bulkInsert(options, [{
+    groupId: 1,
     url: 'temp',
     preview: true
    }], {validate: true})

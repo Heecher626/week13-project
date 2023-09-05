@@ -20,8 +20,8 @@ module.exports = {
     */
    options.tableName = 'Events'
    await queryInterface.bulkInsert(options, [{
-    //venueId: 1,
-    //groupId: 1,
+    venueId: 1,
+    groupId: 1,
     name: 'event1',
     description: 'This is an event',
     type: 'Online',

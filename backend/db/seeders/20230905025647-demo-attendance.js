@@ -20,6 +20,8 @@ module.exports = {
     */
    options.tableName = 'Attendances'
    await queryInterface.bulkInsert(options, [{
+    userId: 1,
+    eventId: 1,
     status: 'pending'
    }], {validate: true})
   },

@@ -2,6 +2,7 @@
 
 const { sequelize } = require('../models');
 
+let {Group} = require('../models')
 let options = {};
 if (process.env.NODE_ENV === 'production') {
   options.schema = process.env.SCHEMA;
@@ -18,9 +19,9 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
-   options.tableName = 'Groups'
-   await queryInterface.bulkInsert(options, [{
-    //organizerId: 1,
+   //options.tableName = 'Groups'
+   await Group.bulkCreate( [{
+    organizerId: 1,
     name: 'group1',
     about: 'This is a group',
     type: 'Online',
