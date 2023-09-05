@@ -16,6 +16,14 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      venueId: {
+        type: Sequelize.INTEGER,
+        references: {model: 'Venues'}
+      },
+      groupId: {
+        type: Sequelize.INTEGER,
+        references: {model: 'Users'}
+      },
       name: {
         type: Sequelize.STRING,
         allowNull: false

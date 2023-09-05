@@ -16,7 +16,7 @@ module.exports = {
       },
       eventId: {
         type: Sequelize.INTEGER,
-        references: { model: 'Events', foreignKey: 'id' }
+        references: { model: 'Events'}
       },
       url: {
         type: Sequelize.STRING
