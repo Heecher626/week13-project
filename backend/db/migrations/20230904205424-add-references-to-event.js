@@ -24,7 +24,7 @@ module.exports = {
     await queryInterface.addColumn("Events", 'groupId', {
       type: Sequelize.INTEGER,
       references: {model: 'Groups'},
-    })
+    }, options)
   },
 
   async down (queryInterface, Sequelize) {
