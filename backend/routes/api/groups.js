@@ -31,6 +31,8 @@ router.get('/', async (req, res)=> {
     group: 'members.id'
   })
 
+  console.log(groups)
+
   let groupList = []
 
   groups.forEach(group => {
@@ -217,5 +219,27 @@ router.put('/:groupId', requireAuth, validateGroup, async (req, res) => {
   res.json(targetGroup)
 })
 
+router.delete('/:groupId', requireAuth, async (req, res) => {
+  const targetGroup = await Group.findByPk(req.params.groupId)
+
+  if(!targetGroup){
+    res.status = 404
+    return res.json({message: "Group couldn't be found"})
+  }
+
+  if(targetGroup.organizerId != req.user.id){
+    res.status(403)
+    return res.json({message : "Forbidden"})
+  }
+
+  await Group.destroy({
+    where: {
+      id: req.params.groupId
+    }
+  })
+
+  res.json({message: "Successfully deleted"})
+
+})
 
 module.exports = router
