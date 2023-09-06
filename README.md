@@ -1,3 +1,4 @@
+
 # Elliot Starr's Week 13 Project
 
 ## Database Schema Design
@@ -50,7 +51,7 @@ correct role(s) or permission(s).
 
 Returns the information about the current user that is logged in.
 
-* Require Authentication: true
+* Require Authentication: false
 * Request
   <!--!!START SILENT -->
   * Method: GET
@@ -113,7 +114,7 @@ information.
 
     ```json
     {
-      "email": "john.smith@gmail.com",
+      "credential": "john.smith@gmail.com",
       "password": "secret password"
     }
     ```
@@ -219,10 +220,11 @@ user's information.
 
     ```json
     {
-      "message": "User already exists",
+      "title": "Validation error",
+      "message": "Validation error",
       "errors": {
-        "email": "User with that email already exists"
-      }
+          "email": "email must be unique"
+      },
     }
     ```
 
@@ -234,10 +236,11 @@ user's information.
 
     ```json
     {
-      "message": "User already exists",
+      "title": "Validation error",
+      "message": "Validation error",
       "errors": {
-        "username": "User with that username already exists"
-      }
+          "username": "username must be unique"
+      },
     }
     ```
 
@@ -452,6 +455,7 @@ Creates and returns a new group.
       "state": "NY",
     }
     ```
+    The type property should only allow "In person" or "Online"
 
 * Successful Response
   * Status Code: 201
@@ -1146,6 +1150,7 @@ Creates and returns a new event for a group specified by its id
       "endDate": "2021-11-19 22:00:00",
     }
     ```
+    The type property should only allow "In person" or "Online"
 
 * Successful Response
   * Status Code: 200
@@ -1167,6 +1172,7 @@ Creates and returns a new event for a group specified by its id
       "endDate": "2021-11-19 22:00:00",
     }
     ```
+
 
 * Error Response: Body validation errors
   * Status Code: 400
@@ -1592,6 +1598,7 @@ Change the status of a membership for a group specified by id.
       "status": "member"
     }
     ```
+    Allowed status values: "co-host", "member", "pending"
 
 * Successful Response
   * Status Code: 200
@@ -1934,6 +1941,7 @@ Change the status of an attendance for an event specified by id.
       "status": "attending"
     }
     ```
+    Allowed status values: "attending", "waitlist", "pending"
 
 * Successful Response
   * Status Code: 200
