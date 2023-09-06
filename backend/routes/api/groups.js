@@ -191,4 +191,31 @@ router.post('/:groupId/images', requireAuth, async (req, res) => {
   res.json(safeImage)
 })
 
+router.put('/:groupId', requireAuth, validateGroup, async (req, res) => {
+
+  const targetGroup = await Group.findByPk(req.params.groupId)
+
+  if(!targetGroup){
+    res.status = 404
+    res.json({message: "Group couldn't be found"})
+  }
+
+  if(targetGroup.organizerId != req.user.id){
+    res.status(403)
+    res.json({message : "Forbidden"})
+  }
+
+  const {name, about, type, private, city, state} = req.body
+
+  targetGroup.name = name
+  targetGroup.about = about
+  targetGroup.type = type
+  targetGroup.private = private
+  targetGroup.city = city
+  targetGroup.state = state
+
+  res.json(targetGroup)
+})
+
+
 module.exports = router
