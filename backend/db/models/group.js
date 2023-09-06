@@ -15,15 +15,27 @@ module.exports = (sequelize, DataTypes) => {
       Group.hasMany(models.Event, {foreignKey: 'groupId'})
       Group.hasMany(models.Venue, {foreignKey: 'groupId'})
       Group.hasMany(models.GroupImage, {foreignKey: 'groupId'})
-      Group.belongsTo(models.User, {foreignKey: 'organizerId'})
+      Group.belongsTo(models.User, {foreignKey: 'organizerId', as: 'Organizer'})
       Group.belongsToMany(models.User, {through: models.Membership, foreignKey: 'groupId', otherKey: 'userId', as: 'members'})
       Group.belongsToMany(models.Venue, {through: models.Event, foreignKey: 'groupId', otherKey: 'venueId', as: 'eventVenues'})
     }
   }
   Group.init({
     organizerId: { type: DataTypes.INTEGER},
-    name: { type: DataTypes.STRING, allowNull: false},
-    about: { type: DataTypes.STRING, allowNull: false},
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        len: [1, 60]
+      }
+    },
+    about: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        len: [50, 1000]
+      }
+    },
     type: { type: DataTypes.ENUM(['In person', 'Online']), allowNull: false},
     private: { type: DataTypes.BOOLEAN, allowNull: false},
     city: { type: DataTypes.STRING},

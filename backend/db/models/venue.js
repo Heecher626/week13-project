@@ -25,6 +25,11 @@ module.exports = (sequelize, DataTypes) => {
     lng: {type: DataTypes.DOUBLE}
   }, {
     sequelize,
+    defaultScope: {
+      attributes: {
+        exclude: ['createdAt', 'updatedAt']
+      }
+    },
     modelName: 'Venue',
   });
   return Venue;
