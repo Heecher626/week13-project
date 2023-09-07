@@ -2,6 +2,7 @@ const express = require('express')
 
 const router = express.Router()
 const {Event, Group, Venue, User, sequelize, EventImage} = require('../../db/models')
+const group = require('../../db/models/group')
 
 router.get('/', async (req, res) => {
   const eventsList = await Event.findAll({
@@ -34,13 +35,27 @@ router.get('/', async (req, res) => {
     group: 'Users.id',
   })
 
-  let Events = []
+  let events = []
 
   eventsList.forEach(event => {
-
+    events.push(event.toJSON())
   })
 
-  res.json({eventsList})
+  events.forEach(event => {
+    event.EventImages.forEach(image => {
+      if(image.preview == true){
+        event.previewImage = image.url
+      }
+    })
+    event.EventImages = undefined
+    if(!event.previewImage) event.previewImage = "No preview image"
+    if(!event.venueId){
+      event.venueId = null
+      event.Venue = null
+    }
+  })
+
+  res.json({Events: events})
 })
 
 module.exports = router
