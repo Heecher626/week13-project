@@ -327,5 +327,64 @@ router.post('/:groupId/venues', requireAuth, checkVenue, async (req, res) => {
   res.json(safeVenue)
 })
 
+//check if venue doesn't exist?
+const validateEvent = [
+  check('name')
+    .exists({checkFalsy: true})
+    .withMessage("Name must be at least 5 characters"),
+  check('capacity')
+    .exists({checkFalsy: true})
+    .isNumeric({min: 0})
+    .withMessage('Capacity must be an integer'),
+  check('price')
+    .exists({checkFalsy: true})
+    .isNumeric({min: 0})
+    .withMessage('Price is invalid'),
+  check('description')
+    .exists({checkFalsy: true})
+    .withMessage('Description is required'),
+  handleValidationErrors
+]
+
+router.post('/:groupId/events', requireAuth, validateEvent, async (req, res) => {
+  let targetGroup = await Group.findByPk(req.params.groupId)
+
+  if(!targetGroup){
+    res.status = 404
+    return res.json({message: "Group couldn't be found"})
+  }
+
+  let membership = await Membership.findOne({
+    where: {
+      groupId: req.params.groupId,
+      userId: req.user.id
+    }
+  })
+
+  if(targetGroup.organizerId != req.user.id && membership.status != "co-host"){
+    res.status(403)
+    return res.json({message: "Forbidden"})
+  }
+
+  const {venueId, name, type, capacity, price, description, startDate, endDate} = req.body
+
+  const newEvent = await targetGroup.createEvent({venueId, name, type, capacity, price, description, startDate, endDate})
+
+  const safeEvent = {
+    id: newEvent.id,
+    groupId: targetGroup.id,
+    venueId,
+    name,
+    type,
+    capacity,
+    price,
+    description,
+    startDate,
+    endDate
+  }
+
+  res.json(safeEvent)
+})
+
 
 module.exports = router

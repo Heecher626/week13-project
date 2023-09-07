@@ -92,9 +92,6 @@ router.get('/:eventId', async (req, res) => {
     group: 'Users.id',
   })
 
-
-
-
   res.json(event)
 })
 
