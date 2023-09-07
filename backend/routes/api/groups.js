@@ -551,5 +551,47 @@ router.put('/:groupId/membership', requireAuth, async (req, res) => {
   res.json(safeMembership)
 })
 
+router.delete('/:groupId/membership', requireAuth, async (req, res) => {
+  let targetGroup = await Group.findByPk(req.params.groupId)
+
+  if(!targetGroup){
+    res.status = 404
+    res.json({"message": "Group couldn't be found"})
+  }
+
+  let user = await User.findByPk(req.body.memberId)
+
+  if(!user){
+    res.status = 400
+    res.json({
+      "message": "Validation Error",
+      "errors": {
+        "memberId": "User couldn't be found"
+      }
+    })
+  }
+
+  let membership = await Membership.findOne({
+    where: {
+      userId: req.body.memberId,
+      groupId: req.params.groupId
+    }
+  })
+
+  if(!membership){
+    res.status = 404
+    res.json({"message": "Membership between the user and the group does not exist"})
+  }
+
+
+  if(targetGroup.organizerId != req.user.id && membership.userId != req.user.id){
+    res.status = 403
+    res.json({message: "Forbidden"})
+  }
+
+  await membership.destroy()
+
+  res.json({"message": "Successfully deleted membership from group"})
+})
 
 module.exports = router
