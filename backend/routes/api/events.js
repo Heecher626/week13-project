@@ -136,4 +136,31 @@ router.post('/:eventId/images', requireAuth, async (req, res) => {
   res.json(safeImage)
 })
 
+router.delete('/:eventId', requireAuth, async (req, res) => {
+  let targetEvent = await Event.findByPk(req.params.eventId)
+
+  if(!targetEvent){
+    res.status = 404
+    return res.json({message: "Event couldn't be found"})
+  }
+
+  let targetGroup = await targetEvent.getGroup()
+
+  let membership = await Membership.findOne({
+    where: {
+      groupId: targetGroup.id,
+      userId: req.user.id
+    }
+  })
+
+  if(targetGroup.organizerId != req.user.id && membership.status != "co-host"){
+    res.status(403)
+    return res.json({message: "Forbidden"})
+  }
+
+  await targetEvent.destroy()
+
+  res.json({message: "Successfully deleted"})
+})
+
 module.exports = router
