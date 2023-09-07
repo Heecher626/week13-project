@@ -6,6 +6,7 @@ const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation.js')
 const {Group, User, Membership, sequelize, GroupImage, Venue} = require('../../db/models');
 const { json } = require('sequelize');
+const group = require('../../db/models/group.js');
 
 
 router.get('/', async (req, res)=> {
@@ -344,6 +345,13 @@ const validateEvent = [
   check('description')
     .exists({checkFalsy: true})
     .withMessage('Description is required'),
+  check('startDate')
+    .exists({checkFalsy: true})
+    .isAfter(Date(Date.now()))
+    .withMessage("Start date must be in the future"),
+  // check('endDate')
+  //   .exists({checkFalsy: true})
+  //   .isAfter(req.body.startDate),
   handleValidationErrors
 ]
 
@@ -466,7 +474,82 @@ router.post('/:groupId/membership', requireAuth, async (req, res) => {
   }
 
   res.json(safeMember)
-
-
 })
+
+router.put('/:groupId/membership', requireAuth, async (req, res) => {
+  let targetGroup = await Group.findByPk(req.params.groupId)
+
+  if(!targetGroup){
+    res.status = 404
+    res.json({"message": "Group couldn't be found"})
+  }
+
+  let user = await User.findByPk(req.body.memberId)
+
+  if(!user){
+    res.status = 400
+    res.json({
+      "message": "Validation Error",
+      "errors": {
+        "memberId": "User couldn't be found"
+      }
+    })
+  }
+
+  let membership = await Membership.findOne({
+    where: {
+      userId: req.body.memberId,
+      groupId: req.params.groupId
+    }
+  })
+
+  if(!membership){
+    res.status = 404
+    res.json({"message": "Membership between the user and the group does not exist"})
+  }
+
+  if(req.body.status === "pending"){
+    res.status = 400
+    res.json({
+      "message": "Validations Error",
+      "errors": {
+        "status" : "Cannot change a membership status to pending"
+      }
+    })
+  }
+
+  let requesterMembership = await Membership.findOne({
+    where: {
+      userId: req.user.id,
+      groupId: req.params.groupId
+    }
+  })
+
+  if(req.body.status === "member"){
+    if(targetGroup.organizerId != req.user.id && requesterMembership.status != "co-host"){
+      res.status = 403
+      res.json({message: 'Forbidden'})
+    }
+    membership.status = req.body.status
+  }
+
+  if(req.body.status === "co-host"){
+    if(targetGroup.organizerId != req.user.id){
+      res.status = 403
+      res.json({message: 'Forbidden'})
+    }
+    membership.status = req.body.status
+  }
+
+  let safeMembership = {
+    id: membership.id,
+    groupId: membership.groupId,
+    memberId: membership.userId,
+    status: membership.status
+  }
+
+  res.json(safeMembership)
+})
+
+
 module.exports = router
