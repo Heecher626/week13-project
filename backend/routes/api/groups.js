@@ -5,7 +5,6 @@ const { requireAuth } = require('../../utils/auth.js');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation.js')
 const {Group, User, Membership, sequelize, GroupImage, Venue} = require('../../db/models')
-const user = require('../../db/models/user')
 
 
 router.get('/', async (req, res)=> {
