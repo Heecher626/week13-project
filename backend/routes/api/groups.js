@@ -250,8 +250,15 @@ router.get('/:groupId/venues', requireAuth, async (req, res) => {
     return res.json({message: "Group couldn't be found"})
   }
 
-  //add co-host permissions
-  if(targetGroup.organizerId != req.user.id){
+  let membership = await Membership.findOne({
+    where: {
+      groupId: req.params.groupId,
+      userId: req.user.id
+    }
+  })
+
+
+  if(targetGroup.organizerId != req.user.id && membership.status != "co-host"){
     res.status(403)
     return res.json({message: "Forbidden"})
   }
@@ -282,6 +289,7 @@ const checkVenue = [
 ]
 
 router.post('/:groupId/venues', requireAuth, checkVenue, async (req, res) => {
+
   let targetGroup = await Group.findByPk(req.params.groupId)
 
   if(!targetGroup){
@@ -289,8 +297,54 @@ router.post('/:groupId/venues', requireAuth, checkVenue, async (req, res) => {
     return res.json({message: "Group couldn't be found"})
   }
 
-  //add co-host permissions
-  if(targetGroup.organizerId != req.user.id){
+  let membership = await Membership.findOne({
+    where: {
+      groupId: req.params.groupId,
+      userId: req.user.id
+    }
+  })
+
+
+  if(targetGroup.organizerId != req.user.id && membership.status != "co-host"){
+    res.status(403)
+    return res.json({message: "Forbidden"})
+  }
+
+  const {address, city, state, lat, lng} = req.body
+
+  const venue = await targetGroup.createVenue({address, city, state, lat, lng})
+
+  const safeVenue = {
+    id: venue.Id,
+    groupId: venue.groupId,
+    address: venue.address,
+    city: venue.city,
+    state: venue.state,
+    lat: venue.lat,
+    lng: venue.lng
+  }
+
+  res.json(safeVenue)
+})
+
+router.post('/:groupId/venues', requireAuth, checkVenue, async (req, res) => {
+
+  let targetGroup = await Group.findByPk(req.params.groupId)
+
+  if(!targetGroup){
+    res.status = 404
+    return res.json({message: "Group couldn't be found"})
+  }
+
+  let membership = await Membership.findOne({
+    where: {
+      groupId: req.params.groupId,
+      userId: req.user.id
+    }
+  })
+
+
+  if(targetGroup.organizerId != req.user.id && membership.status != "co-host"){
     res.status(403)
     return res.json({message: "Forbidden"})
   }
