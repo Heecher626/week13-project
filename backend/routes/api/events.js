@@ -58,4 +58,44 @@ router.get('/', async (req, res) => {
   res.json({Events: events})
 })
 
+router.get('/:eventId', async (req, res) => {
+  const event = await Event.findByPk(req.params.eventId, {
+    attributes: {
+      include: [
+        [
+          sequelize.fn('COUNT', sequelize.col('Users.id')), 'numAttending'
+        ]
+      ],
+      exclude: ['createdAt', 'updatedAt']
+    },
+
+    include: [
+      {
+        model: Group,
+        attributes: ['id', 'name', 'private', 'city', 'state']
+      },
+      {
+        model: Venue,
+        attributes: {
+          exclude: ['groupId', 'createdAt', 'updatedAt']
+        }
+      },
+      {
+        model: User,
+        attributes: []
+      },
+      {
+        model: EventImage,
+        attributes: ['id', 'url', 'preview']
+      }
+    ],
+    group: 'Users.id',
+  })
+
+
+
+
+  res.json(event)
+})
+
 module.exports = router
