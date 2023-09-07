@@ -4,7 +4,8 @@ const router = express.Router()
 const { requireAuth } = require('../../utils/auth.js');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation.js')
-const {Group, User, Membership, sequelize, GroupImage, Venue} = require('../../db/models')
+const {Group, User, Membership, sequelize, GroupImage, Venue} = require('../../db/models');
+const { json } = require('sequelize');
 
 
 router.get('/', async (req, res)=> {
@@ -419,10 +420,53 @@ router.get('/:groupId/members', async (req, res) => {
     jsonMembers.filter(member => {
       member.Membership.status != 'pending'
     })
+
+    res.json({Members: jsonMembers})
   }
 
 
 
   res.json({Members: members})
+})
+
+router.post('/:groupId/membership', requireAuth, async (req, res) => {
+  let targetGroup = await Group.findByPk(req.params.groupId)
+
+  if(!targetGroup){
+    res.status = 404
+    res.json({message: "Group couldn't be found"})
+  }
+
+  let checkMembership = await Membership.findOne({
+    where: {
+      groupId: req.params.groupId,
+      userId: req.user.id
+    }
+  })
+
+  if(checkMembership){
+    res.status = 400
+    if(checkMembership.status == 'pending'){
+      res.json({
+        "message": "Membership has already been requested"
+      })
+    }
+    else{
+      res.json({
+        "message": "User is already a member of the group"
+      })
+    }
+  }
+
+  await Membership.create({userId: req.user.id, groupId: req.params.groupId, status: 'pending'})
+
+  let safeMember = {
+    memberId: req.user.id,
+    status: "pending"
+  }
+
+  res.json(safeMember)
+
+
 })
 module.exports = router
