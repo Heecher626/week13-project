@@ -1,8 +1,10 @@
 const express = require('express')
 
 const router = express.Router()
-const {Event, Group, Venue, User, sequelize, EventImage} = require('../../db/models')
+const {Event, Group, Membership, Attendance, Venue, User, sequelize, EventImage} = require('../../db/models')
 const group = require('../../db/models/group')
+const { requireAuth } = require('../../utils/auth')
+const event = require('../../db/models/event')
 
 router.get('/', async (req, res) => {
   const eventsList = await Event.findAll({
@@ -93,6 +95,45 @@ router.get('/:eventId', async (req, res) => {
   })
 
   res.json(event)
+})
+
+router.post('/:eventId/images', requireAuth, async (req, res) => {
+  const targetEvent = await Event.findByPk(req.params.eventId)
+
+  if(!targetEvent){
+    res.status = 404
+    res.json({message: "Event couldn't be found"})
+  }
+
+  //let group = await targetEvent.getGroup()
+
+  let attendance = await Attendance.findOne({
+    where: {
+      userId: req.user.id,
+      eventId: req.params.eventId
+    }
+  })
+
+  console.log(attendance)
+
+  let authorizedRoles = ['attendee', 'host', 'co-host']
+  if(authorizedRoles.indexOf(attendance.status) !== -1){
+    res.status(403)
+    return res.json({message: "Forbidden"})
+  }
+
+
+  const {url, preview} = req.body
+
+  let newImage = await targetEvent.createEventImage({url, preview})
+
+  let safeImage = {
+    id: newImage.id,
+    url,
+    preview
+  }
+
+  res.json(safeImage)
 })
 
 module.exports = router
