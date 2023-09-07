@@ -30,8 +30,6 @@ router.get('/', async (req, res)=> {
     group: 'members.id'
   })
 
-  console.log(groups)
-
   let groupList = []
 
   groups.forEach(group => {
@@ -215,6 +213,8 @@ router.put('/:groupId', requireAuth, validateGroup, async (req, res) => {
   targetGroup.city = city
   targetGroup.state = state
 
+  await targetGroup.save()
+
   res.json(targetGroup)
 })
 
@@ -284,7 +284,8 @@ const checkVenue = [
   check("lng")
     .exists({checkFalsy: true})
     .isDecimal()
-    .withMessage("Longitude is not valid")
+    .withMessage("Longitude is not valid"),
+  handleValidationErrors
 ]
 
 router.post('/:groupId/venues', requireAuth, checkVenue, async (req, res) => {
@@ -326,43 +327,5 @@ router.post('/:groupId/venues', requireAuth, checkVenue, async (req, res) => {
   res.json(safeVenue)
 })
 
-router.post('/:groupId/venues', requireAuth, checkVenue, async (req, res) => {
-
-  let targetGroup = await Group.findByPk(req.params.groupId)
-
-  if(!targetGroup){
-    res.status = 404
-    return res.json({message: "Group couldn't be found"})
-  }
-
-  let membership = await Membership.findOne({
-    where: {
-      groupId: req.params.groupId,
-      userId: req.user.id
-    }
-  })
-
-
-  if(targetGroup.organizerId != req.user.id && membership.status != "co-host"){
-    res.status(403)
-    return res.json({message: "Forbidden"})
-  }
-
-  const {address, city, state, lat, lng} = req.body
-
-  const venue = await targetGroup.createVenue({address, city, state, lat, lng})
-
-  const safeVenue = {
-    id: venue.Id,
-    groupId: venue.groupId,
-    address: venue.address,
-    city: venue.city,
-    state: venue.state,
-    lat: venue.lat,
-    lng: venue.lng
-  }
-
-  res.json(safeVenue)
-})
 
 module.exports = router
