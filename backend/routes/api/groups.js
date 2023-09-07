@@ -386,5 +386,43 @@ router.post('/:groupId/events', requireAuth, validateEvent, async (req, res) => 
   res.json(safeEvent)
 })
 
+router.get('/:groupId/members', async (req, res) => {
+  let targetGroup = await Group.findByPk(req.params.groupId)
 
+  if(!targetGroup){
+    res.status = 404
+    return res.json({message: "Group couldn't be found"})
+  }
+
+  let membership = await Membership.findOne({
+    where: {
+      groupId: req.params.groupId,
+      userId: req.user.id
+    }
+  })
+
+
+
+  let members = await targetGroup.getMembers({
+
+    joinTableAttributes: ['status'],
+
+  })
+
+  if(targetGroup.organizerId == req.user.id || membership.status == "co-host"){
+    let jsonMembers = []
+
+    members.forEach(member => {
+      jsonMembers.push(member.toJSON())
+    })
+
+    jsonMembers.filter(member => {
+      member.Membership.status != 'pending'
+    })
+  }
+
+
+
+  res.json({Members: members})
+})
 module.exports = router
