@@ -242,4 +242,128 @@ router.delete('/:groupId', requireAuth, async (req, res) => {
 
 })
 
+router.get('/:groupId/venues', requireAuth, async (req, res) => {
+  let targetGroup = await Group.findByPk(req.params.groupId)
+
+  if(!targetGroup){
+    res.status = 404
+    return res.json({message: "Group couldn't be found"})
+  }
+
+  let membership = await Membership.findOne({
+    where: {
+      groupId: req.params.groupId,
+      userId: req.user.id
+    }
+  })
+
+
+  if(targetGroup.organizerId != req.user.id && membership.status != "co-host"){
+    res.status(403)
+    return res.json({message: "Forbidden"})
+  }
+
+  let venues = await targetGroup.getVenues()
+
+  res.json({Venues: venues})
+})
+
+const checkVenue = [
+  check('address')
+    .exists({checkFalsy: true})
+    .withMessage("Street address is required"),
+  check('city')
+    .exists({checkFalsy: true})
+    .withMessage("City is required"),
+  check('state')
+    .exists({checkFalsy: true})
+    .withMessage("State is required"),
+  check("lat")
+    .exists({checkFalsy: true})
+    .isDecimal()
+    .withMessage("Latitude is not valid"),
+  check("lng")
+    .exists({checkFalsy: true})
+    .isDecimal()
+    .withMessage("Longitude is not valid")
+]
+
+router.post('/:groupId/venues', requireAuth, checkVenue, async (req, res) => {
+
+  let targetGroup = await Group.findByPk(req.params.groupId)
+
+  if(!targetGroup){
+    res.status = 404
+    return res.json({message: "Group couldn't be found"})
+  }
+
+  let membership = await Membership.findOne({
+    where: {
+      groupId: req.params.groupId,
+      userId: req.user.id
+    }
+  })
+
+
+  if(targetGroup.organizerId != req.user.id && membership.status != "co-host"){
+    res.status(403)
+    return res.json({message: "Forbidden"})
+  }
+
+  const {address, city, state, lat, lng} = req.body
+
+  const venue = await targetGroup.createVenue({address, city, state, lat, lng})
+
+  const safeVenue = {
+    id: venue.Id,
+    groupId: venue.groupId,
+    address: venue.address,
+    city: venue.city,
+    state: venue.state,
+    lat: venue.lat,
+    lng: venue.lng
+  }
+
+  res.json(safeVenue)
+})
+
+router.post('/:groupId/venues', requireAuth, checkVenue, async (req, res) => {
+
+  let targetGroup = await Group.findByPk(req.params.groupId)
+
+  if(!targetGroup){
+    res.status = 404
+    return res.json({message: "Group couldn't be found"})
+  }
+
+  let membership = await Membership.findOne({
+    where: {
+      groupId: req.params.groupId,
+      userId: req.user.id
+    }
+  })
+
+
+  if(targetGroup.organizerId != req.user.id && membership.status != "co-host"){
+    res.status(403)
+    return res.json({message: "Forbidden"})
+  }
+
+  const {address, city, state, lat, lng} = req.body
+
+  const venue = await targetGroup.createVenue({address, city, state, lat, lng})
+
+  const safeVenue = {
+    id: venue.Id,
+    groupId: venue.groupId,
+    address: venue.address,
+    city: venue.city,
+    state: venue.state,
+    lat: venue.lat,
+    lng: venue.lng
+  }
+
+  res.json(safeVenue)
+})
+
 module.exports = router
