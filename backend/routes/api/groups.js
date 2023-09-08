@@ -495,6 +495,8 @@ router.post('/:groupId/events', requireAuth, validateEvent, async (req, res) => 
 
   const newEvent = await targetGroup.createEvent({venueId, name, type, capacity, price, description, startDate, endDate})
 
+  const attendance = Attendance.create({userId: req.user.id, eventId: newEvent.id, status: 'host'})
+
   const safeEvent = {
     id: newEvent.id,
     groupId: targetGroup.id,

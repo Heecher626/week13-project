@@ -539,8 +539,6 @@ router.put('/:eventId', requireAuth, validateEvent, async (req, res) => {
   await targetEvent.set({venueId, name, type, capacity, price, description, startDate, endDate})
 
   const safeEvent = {
-    id: targetEvent.id,
-    groupId: targetEvent.groupId,
     venueId,
     name,
     type,

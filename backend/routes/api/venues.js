@@ -62,7 +62,7 @@ router.put('/:venueId', requireAuth, checkVenue, async (req, res) => {
   await targetVenue.save()
 
   const safeVenue = {
-    id: targetVenue.Id,
+    id: targetVenue.id,
     groupId: targetVenue.groupId,
     address: targetVenue.address,
     city: targetVenue.city,
