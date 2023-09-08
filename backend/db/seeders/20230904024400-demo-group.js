@@ -19,16 +19,16 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
-  //  options.tableName = 'Groups'
-  //  await Group.bulkCreate( [{
-  //   organizerId: 1,
-  //   name: 'group1',
-  //   about: 'This is a group',
-  //   type: 'Online',
-  //   private: true,
-  //   city: 'Boston',
-  //   state: 'Massachusetts',
-  //  }], {validate: true})
+  options.tableName = 'Groups'
+   await queryInterface.bulkInsert(options, [{
+    organizerId: 1,
+    name: 'group1',
+    about: 'This is a group',
+    type: 'Online',
+    private: true,
+    city: 'Boston',
+    state: 'Massachusetts',
+   }], {validate: true})
   },
 
   async down (queryInterface, Sequelize) {
@@ -38,12 +38,12 @@ module.exports = {
      * Example:
      * await queryInterface.bulkDelete('People', null, {});
      */
-    // options.tableName = 'Groups'
-    // const Op = Sequelize.Op
-    // await queryInterface.bulkDelete(options, {
-    //   name: {
-    //     [Op.in]: ['group1']
-    //   }
-    // }, {})
+    options.tableName = 'Groups'
+    const Op = Sequelize.Op
+    await queryInterface.bulkDelete(options, {
+      name: {
+        [Op.in]: ['group1']
+      }
+    }, {})
   }
 };
