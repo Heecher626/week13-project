@@ -94,6 +94,8 @@ router.get('/', async (req, res) => {
 
   const eventsList = await Event.findAll({
 
+    attributes: ['id', 'venueId', 'groupId', 'name', 'type','startDate','endDate'],
+
     include: [
       {
         model: Group,
@@ -154,6 +156,9 @@ router.get('/', async (req, res) => {
 
 router.get('/:eventId', async (req, res) => {
   const event = await Event.findByPk(req.params.eventId, {
+    attributes: {
+      exclude: ['createdAt', 'updatedAt']
+    },
 
     include: [
       {
@@ -175,6 +180,12 @@ router.get('/:eventId', async (req, res) => {
       }
     ],
   })
+
+  if(!event){
+    res.status = 404
+    res.json({"message": "Event couldn't be found"})
+  }
+
 
   let jsonEvent = event.toJSON()
 
@@ -211,10 +222,15 @@ router.post('/:eventId/images', requireAuth, async (req, res) => {
     }
   })
 
+  if(!attendance){
+    res.status(403)
+    res.json({'message': 'Forbidden'})
+  }
+
   console.log(attendance)
 
-  let authorizedRoles = ['attendee', 'host', 'co-host']
-  if(authorizedRoles.indexOf(attendance.status) !== -1){
+  let authorizedRoles = ['attending', 'host', 'co-host']
+  if(authorizedRoles.indexOf(attendance.status) === -1){
     res.status(403)
     return res.json({message: "Forbidden"})
   }
@@ -226,9 +242,11 @@ router.post('/:eventId/images', requireAuth, async (req, res) => {
 
   let safeImage = {
     id: newImage.id,
-    url,
-    preview
+    url: req.body.url,
+    preview: newImage.preview
   }
+
+  console.log(safeImage)
 
   res.json(safeImage)
 })
