@@ -4,7 +4,7 @@ const router = express.Router()
 const { requireAuth } = require('../../utils/auth.js');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation.js')
-const {Group, Event, User, Membership, sequelize, GroupImage, EventImage, Venue} = require('../../db/models');
+const {Group, Event, User, Membership, Attendance, sequelize, GroupImage, EventImage, Venue} = require('../../db/models');
 const { json } = require('sequelize');
 const group = require('../../db/models/group.js');
 
@@ -21,15 +21,6 @@ router.get('/', async (req, res)=> {
         model: GroupImage
       }
     ],
-
-    attributes: {
-      include: [
-        [
-         sequelize.fn('COUNT', sequelize.col('members.id')), 'numMembers'
-        ]
-      ]
-    },
-    group: ['members.id', 'Group.id']
   })
 
   let groupList = []
@@ -39,6 +30,21 @@ router.get('/', async (req, res)=> {
   });
 
   groupList.forEach(group => {
+    let memberCount = 0;
+    if(!group.members.length){
+      group.numMembers = 0
+      group.members = undefined
+    }
+    else {
+      group.members.forEach(user => {
+        if(user.Membership.status != 'pending'){
+          memberCount++
+        }
+      })
+      group.numMembers = memberCount
+      group.members = undefined
+    }
+
     group.GroupImages.forEach(image => {
       if(image.preview == true){
         group.previewImage = image.url
@@ -59,7 +65,7 @@ router.get('/current', requireAuth, async (req, res) => {
       {
         model: User,
         as: "members",
-        attributes: [],
+        attributes: ['id'],
         where: {
           id: req.user.id
         }
@@ -68,15 +74,6 @@ router.get('/current', requireAuth, async (req, res) => {
         model: GroupImage
       }
     ],
-
-    attributes: {
-      include: [
-        [
-         sequelize.fn('COUNT', sequelize.col('members.id')), 'numMembers'
-        ]
-      ]
-    },
-    group: 'members.id'
   })
 
   let groupList = []
@@ -86,6 +83,21 @@ router.get('/current', requireAuth, async (req, res) => {
   });
 
   groupList.forEach(group => {
+    let memberCount = 0;
+    if(!group.members.length){
+      group.numMembers = 0
+      group.members = undefined
+    }
+    else {
+      group.members.forEach(user => {
+        if(user.Membership.status != 'pending'){
+          memberCount++
+        }
+      })
+      group.numMembers = memberCount
+      group.members = undefined
+    }
+
     group.GroupImages.forEach(image => {
       if(image.preview == true){
         group.previewImage = image.url
@@ -107,28 +119,39 @@ router.get('/:groupId', async (req, res) => {
       {
         model: User,
         as: "members",
-        attributes: []
+        attributes: ['id']
       },
       {
         model: User,
-        as: 'Organizer'
+        as: 'Organizer',
+        attributes: ['id', 'firstName', 'lastName']
       },
       {
         model: Venue
       },
     ],
-    attributes: {
-      include: [
-        [sequelize.fn('COUNT', sequelize.col('members.id')), 'numMembers']
-      ]
-    },
-    group: 'members.id'
   })
 
   if(!group){
     res.status = 404
     res.json({message: "Group couldn't be found"})
   }
+
+  group = group.toJSON()
+  let memberCount = 0;
+    if(!group.members.length){
+      group.numMembers = 0
+      group.members = undefined
+    }
+    else {
+      group.members.forEach(user => {
+        if(user.Membership.status != 'pending'){
+          memberCount++
+        }
+      })
+      group.numMembers = memberCount
+      group.members = undefined
+    }
 
   res.json(group)
 })
@@ -137,17 +160,6 @@ router.get('/:groupId/events', async (req, res) => {
   const targetGroup = await Group.findByPk(req.params.groupId)
 
   const eventsList = await Event.findAll({
-    where: {
-      groupId: targetGroup.id
-    },
-    attributes: {
-      include: [
-        'id', 'groupId', 'venueId', 'name', 'type', 'startDate', 'endDate',
-        [
-          sequelize.fn('COUNT', sequelize.col('Users.id')), 'numAttending'
-        ]
-      ]
-    },
 
     include: [
       {
@@ -159,14 +171,16 @@ router.get('/:groupId/events', async (req, res) => {
         attributes: ['id', 'city', 'state']
       },
       {
-        model: User,
-        attributes: []
+        model: Attendance,
       },
       {
         model: EventImage
       }
     ],
-    group: ['Users.id', 'Event.id']
+    where: {
+      groupId: targetGroup.id
+    },
+
   })
 
   let events = []
@@ -176,6 +190,21 @@ router.get('/:groupId/events', async (req, res) => {
   })
 
   events.forEach(event => {
+    let attendanceCount = 0
+    if(!event.Attendances.length) {
+      event.numAttending = 0;
+      event.Attendances
+    }
+
+    event.Attendances.forEach(attendance => {
+      if (attendance.status === "attending"){
+        attendanceCount++
+      }
+    })
+    event.numAttending = attendanceCount
+    event.Attendances = undefined
+
+
     event.EventImages.forEach(image => {
       if(image.preview == true){
         event.previewImage = image.url

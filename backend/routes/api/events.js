@@ -154,14 +154,6 @@ router.get('/', async (req, res) => {
 
 router.get('/:eventId', async (req, res) => {
   const event = await Event.findByPk(req.params.eventId, {
-    attributes: {
-      include: [
-        [
-          sequelize.fn('COUNT', sequelize.col('Users.id')), 'numAttending'
-        ]
-      ],
-      exclude: ['createdAt', 'updatedAt']
-    },
 
     include: [
       {
@@ -175,18 +167,33 @@ router.get('/:eventId', async (req, res) => {
         }
       },
       {
-        model: User,
-        attributes: []
+        model: Attendance,
       },
       {
         model: EventImage,
         attributes: ['id', 'url', 'preview']
       }
     ],
-    group: 'Users.id',
   })
 
-  res.json(event)
+  let jsonEvent = event.toJSON()
+
+  let attendanceCount = 0
+    if(!jsonEvent.Attendances.length) {
+      jsonEvent.numAttending = 0;
+      jsonEvent.Attendances
+    }
+
+    jsonEvent.Attendances.forEach(attendance => {
+      if (attendance.status === "attending"){
+        attendanceCount++
+      }
+    })
+    jsonEvent.numAttending = attendanceCount
+    jsonEvent.Attendances = undefined
+
+
+  res.json(jsonEvent)
 })
 
 router.post('/:eventId/images', requireAuth, async (req, res) => {
