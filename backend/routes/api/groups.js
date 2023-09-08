@@ -331,6 +331,12 @@ router.post('/:groupId/venues', requireAuth, checkVenue, async (req, res) => {
 
 //check if venue doesn't exist?
 const validateEvent = [
+  check("venueId").custom(async (venueId) => {
+    const venue = await Venue.findByPk(venueId)
+    if(!venue){
+      throw new Error("Venue does not exist")
+    }
+  }),
   check('name')
     .exists({checkFalsy: true})
     .withMessage("Name must be at least 5 characters"),
@@ -349,9 +355,12 @@ const validateEvent = [
     .exists({checkFalsy: true})
     .isAfter(Date(Date.now()))
     .withMessage("Start date must be in the future"),
-  // check('endDate')
-  //   .exists({checkFalsy: true})
-  //   .isAfter(req.body.startDate),
+  check('endDate').custom(async (endDate, {req}) => {
+    let startDate = req.body.startDate
+    if(endDate < startDate){
+      throw new Error("End date is less than start date")
+    }
+  }),
   handleValidationErrors
 ]
 

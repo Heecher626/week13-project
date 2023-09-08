@@ -5,6 +5,8 @@ const {Event, Group, Membership, Attendance, Venue, User, sequelize, EventImage}
 const group = require('../../db/models/group')
 const { requireAuth } = require('../../utils/auth')
 const event = require('../../db/models/event')
+const { handleValidationErrors } = require('../../utils/validation')
+const { check } = require('express-validator');
 
 router.get('/', async (req, res) => {
   const eventsList = await Event.findAll({
@@ -354,5 +356,79 @@ router.delete('/:eventId/attendance', requireAuth, async (req, res) => {
   res.json({"message": "Successfully deleted attendance from event"})
 })
 
+const validateEvent = [
+  check("venueId").custom(async (venueId) => {
+    const venue = await Venue.findByPk(venueId)
+    if(!venue){
+      throw new Error("Venue does not exist")
+    }
+  }),
+  check('name')
+    .exists({checkFalsy: true})
+    .withMessage("Name must be at least 5 characters"),
+  check('capacity')
+    .exists({checkFalsy: true})
+    .isNumeric({min: 0})
+    .withMessage('Capacity must be an integer'),
+  check('price')
+    .exists({checkFalsy: true})
+    .isNumeric({min: 0})
+    .withMessage('Price is invalid'),
+  check('description')
+    .exists({checkFalsy: true})
+    .withMessage('Description is required'),
+  check('startDate')
+    .exists({checkFalsy: true})
+    .isAfter(Date(Date.now()))
+    .withMessage("Start date must be in the future"),
+  check('endDate').custom(async (endDate, {req}) => {
+    let startDate = req.body.startDate
+    if(endDate < startDate){
+      throw new Error("End date is less than start date")
+    }
+  }),
+  handleValidationErrors
+]
 
+router.put('/:eventId', requireAuth, validateEvent, async (req, res) => {
+  let targetEvent = await Event.findByPk(req.params.eventId)
+
+  if(!targetEvent){
+    res.status = 404
+    return res.json({message: "Event couldn't be found"})
+  }
+
+  let targetGroup = await targetEvent.getGroup()
+
+  let membership = await Membership.findOne({
+    where: {
+      groupId: targetGroup.id,
+      userId: req.user.id
+    }
+  })
+
+  if(targetGroup.organizerId != req.user.id && membership.status != "co-host"){
+    res.status(403)
+    return res.json({message: "Forbidden"})
+  }
+
+  const {venueId, name, type, capacity, price, description, startDate, endDate} = req.body
+
+  await targetEvent.set({venueId, name, type, capacity, price, description, startDate, endDate})
+
+  const safeEvent = {
+    id: targetEvent.id,
+    groupId: targetEvent.groupId,
+    venueId,
+    name,
+    type,
+    capacity,
+    price,
+    description,
+    startDate,
+    endDate
+  }
+
+  res.json(safeEvent)
+} )
 module.exports = router
