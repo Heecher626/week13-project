@@ -30,7 +30,6 @@ const checkVenue = [
 
 router.put('/:venueId', requireAuth, checkVenue, async (req, res) => {
 
-  console.log('HIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII>>>>>>>>>>><<<<<<<<<<<<')
   let targetVenue = await Venue.findByPk(req.params.venueId)
 
   if(!targetVenue){
