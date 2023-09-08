@@ -163,4 +163,50 @@ router.delete('/:eventId', requireAuth, async (req, res) => {
   res.json({message: "Successfully deleted"})
 })
 
+router.get('/:eventId/attendees', async (req, res) => {
+  let targetEvent = await Event.findByPk(req.params.eventId)
+
+  if(!targetEvent){
+    res.status = 404
+    return res.json({message: "Event couldn't be found"})
+  }
+
+  let targetGroup = await targetEvent.getGroup()
+
+  //here
+
+  let membership = await Membership.findOne({
+    where: {
+      groupId: targetGroup.id,
+      userId: req.user.id
+    }
+  })
+
+  let attendances = await targetEvent.getUsers({
+    attributes: {
+      exclude: ['username']
+    },
+    joinTableAttributes: ['status'],
+
+  })
+
+  if(targetGroup.organizerId == req.user.id || membership.status == "co-host"){
+    let jsonAttendances = []
+
+    attendances.forEach(attendance => {
+      jsonAttendances.push(attendance.toJSON())
+    })
+    
+    jsonAttendances.filter(attendee => {
+      attendee.Attendance.status != 'pending'
+    })
+
+    res.json({Attendees: jsonAttendances})
+  }
+
+
+
+  res.json({Attendees: attendances})
+})
+
 module.exports = router
