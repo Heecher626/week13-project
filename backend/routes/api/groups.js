@@ -531,6 +531,7 @@ router.put('/:groupId/membership', requireAuth, async (req, res) => {
       res.json({message: 'Forbidden'})
     }
     membership.status = req.body.status
+    await membership.save()
   }
 
   if(req.body.status === "co-host"){
@@ -539,6 +540,8 @@ router.put('/:groupId/membership', requireAuth, async (req, res) => {
       res.json({message: 'Forbidden'})
     }
     membership.status = req.body.status
+
+    await membership.save()
   }
 
   let safeMembership = {
