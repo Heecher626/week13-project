@@ -93,14 +93,6 @@ router.get('/', async (req, res) => {
 
 
   const eventsList = await Event.findAll({
-    attributes: {
-      include: [
-
-        [
-          sequelize.fn('COUNT', sequelize.col('Users.id')), 'numAttending'
-        ]
-      ]
-    },
 
     include: [
       {
@@ -112,17 +104,14 @@ router.get('/', async (req, res) => {
         attributes: ['id', 'city', 'state']
       },
       {
-        model: User,
-        attributes: []
+        model: Attendance,
       },
       {
         model: EventImage
       }
     ],
     where,
-    group: ['Users.id', 'Event.id'],
     ...pagination
-
   })
 
   let events = []
@@ -132,6 +121,21 @@ router.get('/', async (req, res) => {
   })
 
   events.forEach(event => {
+    let attendanceCount = 0
+    if(!event.Attendances.length) {
+      event.numAttending = 0;
+      event.Attendances
+    }
+
+    event.Attendances.forEach(attendance => {
+      if (attendance.status === "attending"){
+        attendanceCount++
+      }
+    })
+    event.numAttending = attendanceCount
+    event.Attendances = undefined
+
+
     event.EventImages.forEach(image => {
       if(image.preview == true){
         event.previewImage = image.url
