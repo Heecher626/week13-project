@@ -451,6 +451,12 @@ router.delete('/:eventId/attendance', requireAuth, async (req, res) => {
     }
   })
 
+  if(!membership){
+    membership = {
+      status: 'not host'
+    }
+  }
+
   if(!attendance){
     res.status = 404
     res.json({"message": "Attendance does not exist for this User"})
