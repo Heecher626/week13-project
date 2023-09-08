@@ -4,7 +4,7 @@ const router = express.Router()
 const { requireAuth } = require('../../utils/auth.js');
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation.js')
-const {Group, User, Membership, sequelize, GroupImage, Venue} = require('../../db/models');
+const {Group, Event, User, Membership, sequelize, GroupImage, EventImage, Venue} = require('../../db/models');
 const { json } = require('sequelize');
 const group = require('../../db/models/group.js');
 
@@ -15,7 +15,7 @@ router.get('/', async (req, res)=> {
       {
         model: User,
         as: "members",
-        attributes: [],
+        attributes: ['id'],
       },
       {
         model: GroupImage
@@ -29,7 +29,7 @@ router.get('/', async (req, res)=> {
         ]
       ]
     },
-    group: 'members.id'
+    group: ['members.id', 'Group.id']
   })
 
   let groupList = []
@@ -133,11 +133,77 @@ router.get('/:groupId', async (req, res) => {
   res.json(group)
 })
 
+router.get('/:groupId/events', async (req, res) => {
+  const targetGroup = await Group.findByPk(req.params.groupId)
+
+  const eventsList = await Event.findAll({
+    where: {
+      groupId: targetGroup.id
+    },
+    attributes: {
+      include: [
+        'id', 'groupId', 'venueId', 'name', 'type', 'startDate', 'endDate',
+        [
+          sequelize.fn('COUNT', sequelize.col('Users.id')), 'numAttending'
+        ]
+      ]
+    },
+
+    include: [
+      {
+        model: Group,
+        attributes: ['id', 'name', 'city', 'state']
+      },
+      {
+        model: Venue,
+        attributes: ['id', 'city', 'state']
+      },
+      {
+        model: User,
+        attributes: []
+      },
+      {
+        model: EventImage
+      }
+    ],
+    group: ['Users.id', 'Event.id']
+  })
+
+  let events = []
+
+  eventsList.forEach(event => {
+    events.push(event.toJSON())
+  })
+
+  events.forEach(event => {
+    event.EventImages.forEach(image => {
+      if(image.preview == true){
+        event.previewImage = image.url
+      }
+    })
+    event.EventImages = undefined
+    if(!event.previewImage) event.previewImage = "No preview image"
+    if(!event.venueId){
+      event.venueId = null
+      event.Venue = null
+    }
+  })
+
+  res.json({Events: events})
+})
+
+
+
 const validateGroup = [
   check('name')
     .exists({ checkFalsy: true })
     .isLength({ max: 60 })
     .withMessage("Name must be 60 characters or less"),
+  check('type').custom( async (type) => {
+    if(type != 'Online' && type != "In person"){
+      throw new Error("Type must be 'Online' or 'In person")
+    }
+  }),
   check('about')
     .exists({ checkFalsy: true })
     .isLength({ min: 50, max: 1000 })
@@ -329,11 +395,21 @@ router.post('/:groupId/venues', requireAuth, checkVenue, async (req, res) => {
   res.json(safeVenue)
 })
 
-//check if venue doesn't exist?
 const validateEvent = [
+  check("venueId").custom(async (venueId) => {
+    const venue = await Venue.findByPk(venueId)
+    if(!venue){
+      throw new Error("Venue does not exist")
+    }
+  }),
   check('name')
     .exists({checkFalsy: true})
     .withMessage("Name must be at least 5 characters"),
+  check('type').custom( async (type) => {
+    if(type != 'Online' && type != "In person"){
+      throw new Error("Type must be 'Online' or 'In person")
+    }
+  }),
   check('capacity')
     .exists({checkFalsy: true})
     .isNumeric({min: 0})
@@ -349,9 +425,12 @@ const validateEvent = [
     .exists({checkFalsy: true})
     .isAfter(Date(Date.now()))
     .withMessage("Start date must be in the future"),
-  // check('endDate')
-  //   .exists({checkFalsy: true})
-  //   .isAfter(req.body.startDate),
+  check('endDate').custom(async (endDate, {req}) => {
+    let startDate = req.body.startDate
+    if(endDate < startDate){
+      throw new Error("End date is less than start date")
+    }
+  }),
   handleValidationErrors
 ]
 

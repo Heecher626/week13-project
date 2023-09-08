@@ -5,17 +5,94 @@ const {Event, Group, Membership, Attendance, Venue, User, sequelize, EventImage}
 const group = require('../../db/models/group')
 const { requireAuth } = require('../../utils/auth')
 const event = require('../../db/models/event')
+const { handleValidationErrors } = require('../../utils/validation')
+const { check } = require('express-validator');
+
 
 router.get('/', async (req, res) => {
+  let errors = {}
+  let where = {}
+  let pagination = {}
+  let tempPage
+
+  const {page, size, name, type, startDate} = req.query
+
+  if(page){
+    if(page < 1){
+      errors.page = "Page must be greater than or equal to 1"
+    }
+    else if (page > 10){
+      tempPage = 10
+    }
+    else {
+      tempPage = page
+    }
+  }
+  else {
+    tempPage = 1
+  }
+
+  if(size){
+    if(size < 1){
+      errors.size = "Size must be greater than or equal to 1"
+    }
+    else if (size > 20){
+      pagination.limit = 20
+    }
+    else {
+      pagination.limit = size
+    }
+  }
+  else {
+    pagination.limit = 20
+  }
+
+  if(name) {
+    if(typeof name != 'string'){
+      errors.name = "Name must be a string"
+    }
+    else {
+      where.name = name
+    }
+  }
+
+  if(type){
+    if(type != 'In person' && type != 'Online'){
+      errors.type = "Type must be 'Online' or 'In person'"
+    }
+    else {
+      where.type = type
+    }
+  }
+
+  if(startDate){
+    let testDate = new Date(startDate)
+    if(isNaN(testDate)) {
+      errors.startDate = 'Start date must be a valid datetime'
+    }
+    else {
+      where.startDate = startDate;
+    }
+  }
+
+  if (
+    errors.page ||
+    errors.size ||
+    errors.name ||
+    errors.type ||
+    errors.startDate
+  ) {
+    res.status(400)
+    return res.json({
+      message: 'BadRequest',
+      errors
+    })
+  }
+
+  pagination.offset = (tempPage - 1) * pagination.limit
+
+
   const eventsList = await Event.findAll({
-    attributes: {
-      include: [
-        'id', 'groupId', 'venueId', 'name', 'type', 'startDate', 'endDate',
-        [
-          sequelize.fn('COUNT', sequelize.col('Users.id')), 'numAttending'
-        ]
-      ]
-    },
 
     include: [
       {
@@ -27,14 +104,14 @@ router.get('/', async (req, res) => {
         attributes: ['id', 'city', 'state']
       },
       {
-        model: User,
-        attributes: []
+        model: Attendance,
       },
       {
         model: EventImage
       }
     ],
-    group: 'Users.id',
+    where,
+    ...pagination
   })
 
   let events = []
@@ -44,6 +121,21 @@ router.get('/', async (req, res) => {
   })
 
   events.forEach(event => {
+    let attendanceCount = 0
+    if(!event.Attendances.length) {
+      event.numAttending = 0;
+      event.Attendances
+    }
+
+    event.Attendances.forEach(attendance => {
+      if (attendance.status === "attending"){
+        attendanceCount++
+      }
+    })
+    event.numAttending = attendanceCount
+    event.Attendances = undefined
+
+
     event.EventImages.forEach(image => {
       if(image.preview == true){
         event.previewImage = image.url
@@ -104,8 +196,6 @@ router.post('/:eventId/images', requireAuth, async (req, res) => {
     res.status = 404
     res.json({message: "Event couldn't be found"})
   }
-
-  //let group = await targetEvent.getGroup()
 
   let attendance = await Attendance.findOne({
     where: {
@@ -172,8 +262,6 @@ router.get('/:eventId/attendees', async (req, res) => {
   }
 
   let targetGroup = await targetEvent.getGroup()
-
-  //here
 
   let membership = await Membership.findOne({
     where: {
@@ -354,5 +442,84 @@ router.delete('/:eventId/attendance', requireAuth, async (req, res) => {
   res.json({"message": "Successfully deleted attendance from event"})
 })
 
+const validateEvent = [
+  check("venueId").custom(async (venueId) => {
+    const venue = await Venue.findByPk(venueId)
+    if(!venue){
+      throw new Error("Venue does not exist")
+    }
+  }),
+  check('name')
+    .exists({checkFalsy: true})
+    .withMessage("Name must be at least 5 characters"),
+  check('type').custom( async (type) => {
+    if(type != 'Online' && type != "In person"){
+      throw new Error("Type must be 'Online' or 'In person")
+    }
+  }),
+  check('capacity')
+    .exists({checkFalsy: true})
+    .isNumeric({min: 0})
+    .withMessage('Capacity must be an integer'),
+  check('price')
+    .exists({checkFalsy: true})
+    .isNumeric({min: 0})
+    .withMessage('Price is invalid'),
+  check('description')
+    .exists({checkFalsy: true})
+    .withMessage('Description is required'),
+  check('startDate')
+    .exists({checkFalsy: true})
+    .isAfter(Date(Date.now()))
+    .withMessage("Start date must be in the future"),
+  check('endDate').custom(async (endDate, {req}) => {
+    let startDate = req.body.startDate
+    if(endDate < startDate){
+      throw new Error("End date is less than start date")
+    }
+  }),
+  handleValidationErrors
+]
 
+router.put('/:eventId', requireAuth, validateEvent, async (req, res) => {
+  let targetEvent = await Event.findByPk(req.params.eventId)
+
+  if(!targetEvent){
+    res.status = 404
+    return res.json({message: "Event couldn't be found"})
+  }
+
+  let targetGroup = await targetEvent.getGroup()
+
+  let membership = await Membership.findOne({
+    where: {
+      groupId: targetGroup.id,
+      userId: req.user.id
+    }
+  })
+
+  if(targetGroup.organizerId != req.user.id && membership.status != "co-host"){
+    res.status(403)
+    return res.json({message: "Forbidden"})
+  }
+
+  const {venueId, name, type, capacity, price, description, startDate, endDate} = req.body
+
+  await targetEvent.set({venueId, name, type, capacity, price, description, startDate, endDate})
+
+  const safeEvent = {
+    id: targetEvent.id,
+    groupId: targetEvent.groupId,
+    venueId,
+    name,
+    type,
+    capacity,
+    price,
+    description,
+    startDate,
+    endDate
+  }
+
+  res.json(safeEvent)
+} )
 module.exports = router
