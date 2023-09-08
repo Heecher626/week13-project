@@ -58,8 +58,6 @@ router.get('/', async (req, res)=> {
 })
 
 router.get('/current', requireAuth, async (req, res) => {
-
-
   const groups = await Group.findAll({
     include: [
       {
@@ -263,6 +261,8 @@ router.post('/', requireAuth, validateGroup, async (req, res) => {
   const {name, about, type, private, city, state} = req.body
 
   const group = await Group.create({name, organizerId: req.user.id, about, type, private, city, state})
+
+  const membership = await Membership.create({userId: req.user.id, groupId: group.id, status: 'host'})
 
   res.json(group)
 })
