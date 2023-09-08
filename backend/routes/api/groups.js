@@ -114,7 +114,8 @@ router.get('/:groupId', async (req, res) => {
   let group = await Group.findByPk(req.params.groupId, {
     include: [
       {
-        model: GroupImage
+        model: GroupImage,
+        attributes: ['id', 'url', 'preview']
       },
       {
         model: User,
@@ -159,7 +160,14 @@ router.get('/:groupId', async (req, res) => {
 router.get('/:groupId/events', async (req, res) => {
   const targetGroup = await Group.findByPk(req.params.groupId)
 
+  if(!targetGroup){
+    res.status = 404
+    res.json({message: "Group couldn't be found"})
+  }
+
   const eventsList = await Event.findAll({
+
+    attributes: ['id', 'venueId', 'groupId', 'name', 'type','startDate','endDate'],
 
     include: [
       {
@@ -412,7 +420,7 @@ router.post('/:groupId/venues', requireAuth, checkVenue, async (req, res) => {
   const venue = await targetGroup.createVenue({address, city, state, lat, lng})
 
   const safeVenue = {
-    id: venue.Id,
+    id: venue.id,
     groupId: venue.groupId,
     address: venue.address,
     city: venue.city,
@@ -521,6 +529,8 @@ router.get('/:groupId/members', async (req, res) => {
 
 
   let members = await targetGroup.getMembers({
+
+    attributes: ['id', 'firstName', 'lastName'],
 
     joinTableAttributes: ['status'],
 

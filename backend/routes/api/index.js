@@ -35,6 +35,8 @@ router.delete('/group-images/:imageId', requireAuth, async (req, res) => {
     }
   })
 
+  
+
   if(targetGroup.organizerId != req.user.id && membership.status != 'co-host'){
     res.status = 403
     res.json({"message": "Forbidden"})
