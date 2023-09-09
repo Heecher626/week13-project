@@ -46,6 +46,11 @@ router.put('/:venueId', requireAuth, checkVenue, async (req, res) => {
     }
   })
 
+  if(!membership){
+    res.status(403)
+    res.json({message: "Forbidden"})
+  }
+
   if(group.organizerId != req.user.id && membership.status != "co-host"){
     res.status(403)
     return res.json({message: "Forbidden"})
