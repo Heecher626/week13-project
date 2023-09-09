@@ -8,6 +8,23 @@ const event = require('../../db/models/event')
 const { handleValidationErrors } = require('../../utils/validation')
 const { check } = require('express-validator');
 
+const formattedDate = (date) => {
+  d = new Date(date);
+  cd = (num) => num.toString().padStart(2, 0);
+  return (
+    d.getFullYear() +
+    "-" +
+    cd(d.getMonth() + 1) +
+    "-" +
+    cd(d.getDate()) +
+    " " +
+    cd(d.getHours()) +
+    ":" +
+    cd(d.getMinutes()) +
+    ":" +
+    cd(d.getSeconds())
+  );
+};
 
 router.get('/', async (req, res) => {
   let errors = {}
@@ -123,6 +140,9 @@ router.get('/', async (req, res) => {
   })
 
   events.forEach(event => {
+    event.startDate = formattedDate(event.startDate)
+    event.endDate = formattedDate(event.endDate)
+
     let attendanceCount = 0
     if(!event.Attendances.length) {
       event.numAttending = 0;
@@ -189,6 +209,9 @@ router.get('/:eventId', async (req, res) => {
 
   let jsonEvent = event.toJSON()
 
+  jsonEvent.startDate = formattedDate(jsonEvent.startDate)
+  jsonEvent.endDate = formattedDate(jsonEvent.endDate)
+
   let attendanceCount = 0
     if(!jsonEvent.Attendances.length) {
       jsonEvent.numAttending = 0;
@@ -202,7 +225,6 @@ router.get('/:eventId', async (req, res) => {
     })
     jsonEvent.numAttending = attendanceCount
     jsonEvent.Attendances = undefined
-
 
   res.json(jsonEvent)
 })
@@ -267,6 +289,11 @@ router.delete('/:eventId', requireAuth, async (req, res) => {
       userId: req.user.id
     }
   })
+
+  if(!membership){
+    res.status(403)
+    return res.json({message: "Forbidden"})
+  }
 
   if(targetGroup.organizerId != req.user.id && membership.status != "co-host"){
     res.status(403)
@@ -529,6 +556,11 @@ router.put('/:eventId', requireAuth, validateEvent, async (req, res) => {
     }
   })
 
+  if(!membership){
+    res.status(403)
+    res.json({message: "Forbidden"})
+  }
+
   if(targetGroup.organizerId != req.user.id && membership.status != "co-host"){
     res.status(403)
     return res.json({message: "Forbidden"})
@@ -545,8 +577,8 @@ router.put('/:eventId', requireAuth, validateEvent, async (req, res) => {
     capacity,
     price,
     description,
-    startDate,
-    endDate
+    startDate: formattedDate(targetEvent.startDate),
+    endDate: formattedDate(targetEvent.endDate)
   }
 
   res.json(safeEvent)

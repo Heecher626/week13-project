@@ -8,6 +8,24 @@ const {Group, Event, User, Membership, Attendance, sequelize, GroupImage, EventI
 const { json } = require('sequelize');
 const group = require('../../db/models/group.js');
 
+const formattedDate = (date) => {
+  d = new Date(date);
+  cd = (num) => num.toString().padStart(2, 0);
+  return (
+    d.getFullYear() +
+    "-" +
+    cd(d.getMonth() + 1) +
+    "-" +
+    cd(d.getDate()) +
+    " " +
+    cd(d.getHours()) +
+    ":" +
+    cd(d.getMinutes()) +
+    ":" +
+    cd(d.getSeconds())
+  );
+};
+
 
 router.get('/', async (req, res)=> {
   const groups = await Group.findAll({
@@ -30,6 +48,9 @@ router.get('/', async (req, res)=> {
   });
 
   groupList.forEach(group => {
+    group.createdAt = formattedDate(group.createdAt)
+    group.updatedAt = formattedDate(group.updatedAt)
+
     let memberCount = 0;
     if(!group.members.length){
       group.numMembers = 0
@@ -81,6 +102,9 @@ router.get('/current', requireAuth, async (req, res) => {
   });
 
   groupList.forEach(group => {
+    group.createdAt = formattedDate(group.createdAt)
+    group.updatedAt = formattedDate(group.updatedAt)
+
     let memberCount = 0;
     if(!group.members.length){
       group.numMembers = 0
@@ -137,6 +161,10 @@ router.get('/:groupId', async (req, res) => {
   }
 
   group = group.toJSON()
+
+  group.createdAt = formattedDate(group.createdAt)
+  group.updatedAt = formattedDate(group.updatedAt)
+
   let memberCount = 0;
     if(!group.members.length){
       group.numMembers = 0
@@ -196,6 +224,9 @@ router.get('/:groupId/events', async (req, res) => {
   })
 
   events.forEach(event => {
+    event.startDate = formattedDate(event.startDate)
+    event.endDate = formattedDate(event.endDate)
+
     let attendanceCount = 0
     if(!event.Attendances.length) {
       event.numAttending = 0;
@@ -264,7 +295,13 @@ router.post('/', requireAuth, validateGroup, async (req, res) => {
 
   const membership = await Membership.create({userId: req.user.id, groupId: group.id, status: 'host'})
 
-  res.json(group)
+  let jsonGroup = group.toJSON()
+
+  jsonGroup.createdAt = formattedDate(jsonGroup.createdAt)
+  jsonGroup.updatedAt = formattedDate(jsonGroup.updatedAt)
+
+  res.json(jsonGroup)
+
 })
 
 router.post('/:groupId/images', requireAuth, async (req, res) => {
@@ -320,7 +357,12 @@ router.put('/:groupId', requireAuth, validateGroup, async (req, res) => {
 
   await targetGroup.save()
 
-  res.json(targetGroup)
+  let jsonResult = targetGroup.toJSON()
+
+  jsonResult.createdAt = formattedDate(jsonResult.createdAt)
+  jsonResult.updatedAt = formattedDate(jsonResult.updatedAt)
+
+  res.json(jsonResult)
 })
 
 router.delete('/:groupId', requireAuth, async (req, res) => {
@@ -360,6 +402,11 @@ router.get('/:groupId/venues', requireAuth, async (req, res) => {
       userId: req.user.id
     }
   })
+
+  if(!membership){
+    res.status(403)
+    res.json({message: "Forbidden"})
+  }
 
 
   if(targetGroup.organizerId != req.user.id && membership.status != "co-host"){
@@ -409,6 +456,10 @@ router.post('/:groupId/venues', requireAuth, checkVenue, async (req, res) => {
     }
   })
 
+  if(!membership){
+    res.status(403)
+    res.json({message: "Forbidden"})
+  }
 
   if(targetGroup.organizerId != req.user.id && membership.status != "co-host"){
     res.status(403)
@@ -486,6 +537,11 @@ router.post('/:groupId/events', requireAuth, validateEvent, async (req, res) => 
     }
   })
 
+  if(!membership){
+    res.status(403)
+    return res.json({message: "Forbidden"})
+  }
+
   if(targetGroup.organizerId != req.user.id && membership.status != "co-host"){
     res.status(403)
     return res.json({message: "Forbidden"})
@@ -506,8 +562,8 @@ router.post('/:groupId/events', requireAuth, validateEvent, async (req, res) => 
     capacity,
     price,
     description,
-    startDate,
-    endDate
+    startDate: formattedDate(newEvent.startDate),
+    endDate: formattedDate(newEvent.endDate)
   }
 
   res.json(safeEvent)
