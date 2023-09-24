@@ -18,6 +18,15 @@ router.use('/groups', groupsRouter)
 router.use('/venues', venuesRouter)
 router.use('/events', eventsRouter)
 
+router.get("/csrf/restore", (req, res) => {
+  const csrfToken = req.csrfToken();
+  res.cookie("XSRF-TOKEN", csrfToken);
+  res.status(200).json({
+    'XSRF-Token': csrfToken
+  });
+});
+
+
 router.delete('/group-images/:imageId', requireAuth, async (req, res) => {
   let targetImage = await GroupImage.findByPk(req.params.imageId)
 
@@ -35,7 +44,7 @@ router.delete('/group-images/:imageId', requireAuth, async (req, res) => {
     }
   })
 
-  
+
 
   if(targetGroup.organizerId != req.user.id && membership.status != 'co-host'){
     res.status = 403
@@ -77,9 +86,5 @@ router.delete('/event-images/:imageId', requireAuth, async (req, res) => {
   res.json({"message": "Successfully deleted"})
 
 })
-
-router.post('/test', (req, res) => {
-  res.json({ requestBody: req.body });
-});
 
 module.exports = router;
