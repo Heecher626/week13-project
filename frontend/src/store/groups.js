@@ -1,10 +1,16 @@
 import { csrfFetch } from "./csrf";
 
 export const LOAD_GROUPS = "groups/LOAD_GROUPS"
+export const ADD_GROUP = "groups/ADD_GROUP"
 
 const load = (groups) => ({
   type: LOAD_GROUPS,
   groups
+})
+
+const add = group => ({
+  type: ADD_GROUP,
+  group
 })
 
 export const getGroups = () => async dispatch => {
@@ -12,10 +18,20 @@ export const getGroups = () => async dispatch => {
 
   if(response.ok){
     let groups = await response.json()
-    console.log("🚀 ~ file: groups.js:16 ~ getGroups ~ groups:", groups)
     dispatch(load(groups.Groups))
   }
+}
 
+export const getOneGroup = (groupId) => async dispatch => {
+  let response = await csrfFetch(`/api/groups/${groupId}`)
+
+  if(response.ok){
+    let group = await response.json()
+    dispatch(add(group))
+
+  } else {
+    console.log('error grabbing one group')
+  }
 }
 
 const initialState = {};
@@ -31,6 +47,9 @@ const groupsReducer = (state = initialState, action) => {
         ...state,
         ...newGroups
       }
+    case (ADD_GROUP):
+      let newState = {...state, groups: {...state.groups, [action.group.id]: action.group}}
+      return newState
     default:
       return state
   }

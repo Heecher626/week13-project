@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux"
-import { getGroups } from "../../store/groups"
+import { getGroups } from "../../../store/groups"
 import { useEffect, useState } from "react"
 
 

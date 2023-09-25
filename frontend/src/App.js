@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { Switch, Route } from "react-router-dom";
 import * as sessionActions from "./store/session";
 import Navigation from "./components/Navigation";
-import { GroupLanding } from "./components/GroupLanding";
+import  Groups  from "./components/Groups";
 import Landing from "./components/Landing";
 
 function App() {
@@ -22,7 +22,7 @@ function App() {
             <Landing />
           </Route>
           <Route path='/groups'>
-            <GroupLanding />
+            <Groups />
           </Route>
         </Switch>}
     </>
