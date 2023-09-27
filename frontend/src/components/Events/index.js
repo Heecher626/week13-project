@@ -1,25 +1,24 @@
 import { Switch, Route } from "react-router-dom";
-import { GroupLanding } from "./GroupLanding";
-import GroupDetails from "./GroupDetails";
+
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getGroups } from "../../store/groups";
-import GroupForm from "./GroupForm";
+import { getEvents } from "../../store/events";
+import EventLanding from "./EventLanding";
 
 
-export default function Groups(){
+export default function Events(){
   const [isLoaded, setIsLoaded] = useState(false)
   const dispatch = useDispatch()
 
   useEffect(() => {
-    dispatch(getGroups()).then(() => setIsLoaded(true))
+    dispatch(getEvents()).then(() => setIsLoaded(true))
   }, [dispatch])
 
   return (
     <>
       {isLoaded && <Switch>
-        <Route exact path='/groups'>
-          <GroupLanding />
+        <Route exact path='/events'>
+          <EventLanding />
         </Route>
         <Route exact path='/groups/new'>
           <GroupForm />

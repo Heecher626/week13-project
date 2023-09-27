@@ -5,14 +5,7 @@ import { NavLink } from "react-router-dom"
 
 
 export function GroupLanding() {
-  const [isLoaded, setIsLoaded] = useState(false)
-
-  const dispatch = useDispatch()
   const groups = useSelector(state => state.groups)
-
-  useEffect(() => {
-    dispatch(getGroups()).then(() => setIsLoaded(true))
-  }, [dispatch])
 
   return(
     <div>
@@ -26,7 +19,7 @@ export function GroupLanding() {
         {Object.entries(groups).map((element) => {
 
           return (
-            <div>
+            <div key={element[1].id}>
               <img src='https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg'/>
               <div>
 
