@@ -9,23 +9,20 @@ import EventLanding from "./EventLanding";
 export default function Events(){
   const [isLoaded, setIsLoaded] = useState(false)
   const dispatch = useDispatch()
-
+  console.log('events working')
   useEffect(() => {
+
     dispatch(getEvents()).then(() => setIsLoaded(true))
   }, [dispatch])
 
   return (
     <>
+
       {isLoaded && <Switch>
         <Route exact path='/events'>
           <EventLanding />
         </Route>
-        <Route exact path='/groups/new'>
-          <GroupForm />
-        </Route>
-        <Route path='/groups/:groupId'>
-          <GroupDetails />
-        </Route>
+
       </Switch>}
     </>
   );

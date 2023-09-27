@@ -12,7 +12,7 @@ export const getEvents = () => async dispatch => {
 
   if(response.ok){
     let events = await response.json()
-    dispatch(load(events))
+    dispatch(load(events.Events))
   }
 }
 

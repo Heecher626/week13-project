@@ -5,5 +5,9 @@ import { NavLink } from "react-router-dom"
 
 export default function EventLanding() {
   const events = useSelector(state => state.events)
-  return null
+  return(
+    <div>
+      hi
+    </div>
+  )
 }

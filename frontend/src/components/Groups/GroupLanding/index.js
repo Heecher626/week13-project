@@ -10,7 +10,7 @@ export function GroupLanding() {
   return(
     <div>
       <div>
-      <NavLink to='/Events'>Events</NavLink>
+      <NavLink to='/events'>Events</NavLink>
       <span>Groups</span>
       </div>
 

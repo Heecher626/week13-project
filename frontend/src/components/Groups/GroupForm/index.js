@@ -6,20 +6,17 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 export default function GroupForm() {
   const dispatch = useDispatch();
   const history = useHistory()
-  const [location, setLocation] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState('')
   const [name, setName] = useState("");
   const [about, setAbout] = useState("");
   const [type, setType] = useState("");
-  const [isPrivate, setIsPrivate] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isPrivate, setIsPrivate] = useState(false);
   const [errors, setErrors] = useState({});
 
 
   const handleSubmit = (e) => {
     e.preventDefault();
-      let splitLocation = location.split(', ')
-      let city = splitLocation[0]
-      let state = splitLocation[1]
       setErrors({});
       return dispatch(
         createGroup({
@@ -52,12 +49,23 @@ export default function GroupForm() {
           <h3>Meetup groups meet locally, in person and type. We'll connect you with people in your area, and more can join you type.</h3>
           <input
             type="text"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
+            value={city}
+            placeholder="Enter your city"
+            onChange={(e) => setCity(e.target.value)}
             required
           />
         </div>
-        {errors.location && <p>{errors.location}</p>}
+        {errors.city && <p>{errors.city}</p>}
+        <div>
+          <input
+            type="text"
+            value={state}
+            placeholder="Enter your state"
+            onChange={(e) => setState(e.target.value)}
+            required
+          />
+        </div>
+        {errors.state && <p>{errors.state}</p>}
         <div>
           <h2>What will your group's name be?</h2>
           <h3>Choose a name that will give people a clear idea of what the group is about. Feel free to get creative! You can edit this later if you change your mind.</h3>
@@ -90,23 +98,23 @@ export default function GroupForm() {
 
         <div>
           <h3>Is this an in person or online group?</h3>
-          <input
-            type="text"
-            value={type}
+          <select
             onChange={(e) => setType(e.target.value)}
-            required
-          />
+            required>
+              <option value={'In person'}>In person</option>
+              <option value={'Online'}>Online</option>
+          </select>
         </div>
         {errors.type && <p>{errors.type}</p>}
 
         <h3>Is this group private or public?</h3>
         <div>
-          <input
-            type="text"
-            value={isPrivate}
+          <select
             onChange={(e) => setIsPrivate(e.target.value)}
-            required
-          />
+            required>
+              <option value={false}>Public</option>
+              <option value={true}>Private</option>
+          </select>
         </div>
         {errors.isPrivate && <p>{errors.isPrivate}</p>}
         {/* <div>
