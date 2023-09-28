@@ -4,7 +4,7 @@
   justify-content: space-between;
   height: 50px;
   flex-wrap: wrap;
-  border-bottom: 3px solid green;
+  border-bottom: 1px solid grey;
 }
 
 .sessionContainer{

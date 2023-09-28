@@ -1,0 +1,34 @@
+.landing-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.top-box {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding: 50px ;
+}
+
+.top-box > * {
+  width: 40%;
+}
+
+.links-container {
+  display: flex;
+  justify-content: center;
+}
+
+.link-box {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.link-box > img{
+  height: 80%;
+}

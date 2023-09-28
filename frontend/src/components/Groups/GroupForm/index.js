@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import { useDispatch } from "react-redux";
 import { createGroup } from "../../../store/groups";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import './GroupForm.css'
 
 export default function GroupForm() {
   const dispatch = useDispatch();
