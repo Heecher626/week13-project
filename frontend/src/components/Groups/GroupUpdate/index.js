@@ -39,11 +39,7 @@ export default function GroupUpdate() {
 
   if(session){
     if(session.user.id !== group.organizerId){
-      return (
-        <div>
-          403 FORBIDDEN
-        </div>
-      )
+      history.push('/')
     }
   }
 

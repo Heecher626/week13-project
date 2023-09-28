@@ -21,7 +21,7 @@ export default function GroupDetails() {
     return null;
   }
 
-  if (session) {
+  if (session.user) {
     if (session.user.id === group.organizerId && isOwner !== true) {
       setIsOwner(true);
       console.log("isOwner? :", isOwner);
@@ -41,8 +41,7 @@ export default function GroupDetails() {
             <h1>{group.name}</h1>
             <h4>{group.location}</h4>
             <span>
-              <h4>Link to Events</h4>
-              <h4>{group.private ? "Private" : "Public"}</h4>
+              <h4>Link to Events · {group.private ? "Private" : "Public"}</h4>
             </span>
             <h4>
               Organized by {group.Organizer.firstName}{" "}

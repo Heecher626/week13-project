@@ -31,7 +31,7 @@ export function GroupLanding() {
 
                 <h3>{element[1].city}, {element[1].state}</h3>
                 <p>{element[1].about}</p>
-                <h3>Link to events * {element[1].private ? 'Private' : 'Public'}</h3>
+                <h3>Link to events · {element[1].private ? 'Private' : 'Public'}</h3>
               </div>
               </NavLink>
             </div>

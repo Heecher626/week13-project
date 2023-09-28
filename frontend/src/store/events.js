@@ -25,10 +25,8 @@ const eventsReducer = (state = initialState, action) => {
       action.events.forEach(event => {
         newEvents[event.id] = event
       })
-      return {
-        ...state,
-        newEvents
-      }
+      return newEvents
+
     default:
       return state
   }

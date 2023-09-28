@@ -95,6 +95,7 @@ export default function GroupForm() {
           <input
             type="text"
             value={about}
+            placeholder="Please write at least 30 characters"
             onChange={(e) => setAbout(e.target.value)}
             required
           />
