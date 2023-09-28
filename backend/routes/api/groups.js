@@ -484,12 +484,12 @@ router.post('/:groupId/venues', requireAuth, checkVenue, async (req, res) => {
 })
 
 const validateEvent = [
-  check("venueId").custom(async (venueId) => {
-    const venue = await Venue.findByPk(venueId)
-    if(!venue){
-      throw new Error("Venue does not exist")
-    }
-  }),
+  // check("venueId").custom(async (venueId) => {
+  //   const venue = await Venue.findByPk(venueId)
+  //   if(!venue){
+  //     throw new Error("Venue does not exist")
+  //   }
+  // }),
   check('name')
     .exists({checkFalsy: true})
     .withMessage("Name must be at least 5 characters"),
@@ -548,9 +548,9 @@ router.post('/:groupId/events', requireAuth, validateEvent, async (req, res) => 
   }
 
   const {venueId, name, type, capacity, price, description, startDate, endDate} = req.body
-
+  console.log('\n\nbefore 552\n', req.body, '\n\n')
   const newEvent = await targetGroup.createEvent({venueId, name, type, capacity, price, description, startDate, endDate})
-
+  console.log('\n\nafter 552\n\n')
   const attendance = Attendance.create({userId: req.user.id, eventId: newEvent.id, status: 'host'})
 
   const safeEvent = {
