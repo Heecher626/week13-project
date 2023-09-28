@@ -1,0 +1,15 @@
+.navContainer {
+  display: flex;
+  align-content: center;
+  justify-content: space-between;
+  height: 50px;
+  flex-wrap: wrap;
+  border-bottom: 3px solid green;
+}
+
+.sessionContainer{
+  display: flex;
+  align-content: center;
+  justify-content: space-around;
+  width: 15%;
+}

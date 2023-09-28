@@ -66,6 +66,22 @@ export const createGroup = group => async dispatch => {
 
   const data = await response.json()
   dispatch(add(data))
+  console.log("🚀 ~ file: groups.js:70 ~ createGroup ~ data:", data)
+  return data
+}
+
+export const updateGroup = (group, groupId) => async dispatch => {
+  let options = {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(group)
+  }
+  let response = await csrfFetch(`/api/groups/${groupId}`, options)
+
+  const data = await response.json()
+  dispatch(add(data))
   return response
 }
 

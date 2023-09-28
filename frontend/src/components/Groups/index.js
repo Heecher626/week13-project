@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getGroups } from "../../store/groups";
 import GroupForm from "./GroupForm";
+import GroupUpdate from "./GroupUpdate";
 
 
 export default function Groups(){
@@ -23,6 +24,9 @@ export default function Groups(){
         </Route>
         <Route exact path='/groups/new'>
           <GroupForm />
+        </Route>
+        <Route path='/groups/:groupId/edit'>
+          <GroupUpdate />
         </Route>
         <Route path='/groups/:groupId'>
           <GroupDetails />

@@ -9,7 +9,6 @@ import OpenModalButton from "../../OpenModalButton";
 
 
 export default function GroupDetails(){
-  const [isLoaded, setIsLoaded] = useState()
   let dispatch = useDispatch()
   const [isOwner, setIsOwner] = useState(false)
   let {groupId} = useParams()
@@ -17,7 +16,7 @@ export default function GroupDetails(){
   const session = useSelector(state => state.session)
 
   useEffect(() => {
-    dispatch(getOneGroup(groupId)).then(()=>{setIsLoaded(true)})
+    dispatch(getOneGroup(groupId))
   }, [dispatch])
 
     if(!group.Organizer){
@@ -54,7 +53,9 @@ export default function GroupDetails(){
 
           {isOwner && (<div>
             <button>Create event</button>
-            <button>Update</button>
+            <NavLink to={`/groups/${groupId}/edit`}>
+              <button>Update</button>
+            </NavLink>
             <OpenModalButton
               buttonText="Delete"
               modalComponent={<DeleteGroupModal groupId={groupId} />}

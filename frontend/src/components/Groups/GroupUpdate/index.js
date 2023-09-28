@@ -1,54 +1,80 @@
-import React, {useState} from "react";
-import { useDispatch } from "react-redux";
-import { createGroup } from "../../../store/groups";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import React, {useState, useEffect} from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { updateGroup } from "../../../store/groups";
+import { useHistory, useParams } from "react-router-dom/cjs/react-router-dom.min";
+import { getOneGroup } from "../../../store/groups";
 
-export default function GroupForm() {
+export default function GroupUpdate() {
+  let { groupId } = useParams()
   const dispatch = useDispatch();
   const history = useHistory()
   const [city, setCity] = useState("");
   const [state, setState] = useState('')
   const [name, setName] = useState("");
   const [about, setAbout] = useState("");
-  const [type, setType] = useState("In person");
+  const [type, setType] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
   const [errors, setErrors] = useState({});
+  const [statesUpdated, setStatesUpdated] = useState(false)
+
+  const group = useSelector(state => state.groups[groupId])
+  const session = useSelector(state => state.session)
+
+  useEffect(() => {
+    dispatch(getOneGroup(groupId))
+  }, [dispatch])
+
+  if(!group.Organizer){
+    return null
+  } else if(!statesUpdated){
+    setCity(group.city)
+    setState(group.state)
+    setName(group.name)
+    setAbout(group.about)
+    setIsPrivate(group.private)
+    setType(group.type)
+    setStatesUpdated(true)
+  }
 
 
-  const handleSubmit = async (e) => {
+  if(session){
+    if(session.user.id !== group.organizerId){
+      return (
+        <div>
+          403 FORBIDDEN
+        </div>
+      )
+    }
+  }
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    let success = true
       setErrors({});
-      let data = await dispatch(
-        createGroup({
+      return dispatch(
+        updateGroup({
           city,
           state,
           name,
           about,
           type,
           private: isPrivate,
-        })
+        }, groupId)
       )
+      .then((e) => history.push(`/groups/${groupId}`))
       .catch(async (res) => {
         const data = await res.json();
         if (data && data.errors) {
           setErrors(data.errors);
-          success = false
         }
       });
-      if(success){
-
-        let groupId = data.id;
-        history.push(`/groups/${groupId}`)
-      }
 
 
   };
 
   return (
     <>
-      <h1>BECOME AN ORGANIZER</h1>
-      <h2>We'll walk you through a few steps to build your local community</h2>
+      <h1>UPDATE YOUR GROUP'S INFORMATION</h1>
+      <h2>We'll walk you through a few steps to update your group's information</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <h2>First, set your group's location</h2>
@@ -105,6 +131,7 @@ export default function GroupForm() {
         <div>
           <h3>Is this an in person or online group?</h3>
           <select
+          value={type}
             onChange={(e) => setType(e.target.value)}
             required>
               <option value={'In person'}>In person</option>
@@ -137,7 +164,7 @@ export default function GroupForm() {
         {errors.confirmPassword && (
           <p>{errors.confirmPassword}</p>
         )}*/}
-        <button type="submit">Create Group</button>
+        <button type="submit">Update Group</button>
       </form>
     </>
   );
