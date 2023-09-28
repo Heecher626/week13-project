@@ -7,6 +7,7 @@ import "./LoginForm.css";
 function LoginFormModal() {
   const dispatch = useDispatch();
   const [credential, setCredential] = useState("");
+  const [disablePassword, setDisablePassword] = useState(true)
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
   const { closeModal } = useModal();
@@ -23,6 +24,19 @@ function LoginFormModal() {
         }
       });
   };
+
+  const demoUser = (e) => {
+    e.preventDefault()
+
+    return dispatch(sessionActions.login({credential: 'demo@user.io', password: 'password'}))
+      .then(closeModal)
+      .catch(async (res) => {
+        const data = await res.json();
+        if(data && data.errors) {
+          setErrors(data.errors);
+        }
+      })
+  }
 
   return (
     <>
@@ -51,6 +65,7 @@ function LoginFormModal() {
         )}
         <button type="submit">Log In</button>
       </form>
+      <button onClick={demoUser}>Demo User</button>
     </>
   );
 }

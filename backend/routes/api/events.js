@@ -111,7 +111,7 @@ router.get('/', async (req, res) => {
 
   const eventsList = await Event.findAll({
 
-    attributes: ['id', 'venueId', 'groupId', 'name', 'type','startDate','endDate'],
+    attributes: ['id', 'venueId', 'groupId', 'name', 'description', 'type','startDate','endDate'],
 
     include: [
       {

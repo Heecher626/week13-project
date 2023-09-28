@@ -1,0 +1,46 @@
+.group-landing-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 0% 20%;
+  width: 60%
+}
+
+.links{
+  display: flex;
+  margin: 20px
+}
+
+.group-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.group > *{
+  display: flex;
+  border-top: 1px solid grey;
+  width: 100%
+
+}
+
+.group > * > div {
+  display:flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
+  width: 60%
+
+}
+
+.group > * > img {
+  width: 40%
+}
+
+p {
+  font-size: small;
+}

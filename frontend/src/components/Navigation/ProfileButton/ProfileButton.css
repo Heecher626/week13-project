@@ -1,0 +1,27 @@
+.profile-dropdown{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  z-index: 2;
+  direction: rtl;
+  right: 0;
+  left: auto;
+  list-style: none;
+  border: 1px solid black;
+  background-color: lightgray;
+  margin: 0;
+  padding: 5px;
+  width: 150px;
+  height: 90px;
+}
+.hidden{
+  display: none;
+}
+
+#logout-button{
+  background: none!important;
+  border: none!important;
+  border-width: 0;
+  padding: 0;
+}
