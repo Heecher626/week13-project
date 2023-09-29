@@ -50,7 +50,9 @@ export default function GroupDetails() {
 
             {isOwner && (
               <div className="buttons-container">
-                <button>Create event</button>
+                <NavLink to={`/groups/${groupId}/events/new`}>
+                  <button>Create event</button>
+                </NavLink>
                 <NavLink to={`/groups/${groupId}/edit`}>
                   <button>Update</button>
                 </NavLink>

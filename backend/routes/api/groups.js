@@ -43,6 +43,11 @@ router.get('/', async (req, res)=> {
 
   let groupList = []
 
+  await groups.forEach(async group => {
+    console.log('numEvents: ', await group.countEvents())
+    group.numEvents = await group.countEvents()
+  })
+
   groups.forEach(group => {
     groupList.push(group.toJSON())
   });
@@ -50,6 +55,7 @@ router.get('/', async (req, res)=> {
   groupList.forEach(group => {
     group.createdAt = formattedDate(group.createdAt)
     group.updatedAt = formattedDate(group.updatedAt)
+
 
     let memberCount = 0;
     if(!group.members.length){

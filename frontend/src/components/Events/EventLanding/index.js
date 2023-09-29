@@ -21,11 +21,7 @@ export default function EventLanding() {
       <div>
         {Object.entries(events).map((element) => {
           let event = element[1]
-          let location = (
-            <div>
-              {event.type === 'Online' ? 'Online' : `${event.venue.city}, ${event.venue.state}`}
-            </div>
-          )
+
           return (
             <div key={event.id}>
               <NavLink to={`/events/${event.id}`}>
@@ -33,7 +29,7 @@ export default function EventLanding() {
                 <div>
                   <span>{event.startDate}</span>
                   <h2>{event.name}</h2>
-                  {location}
+                  <h3>{event.description}</h3>
                 </div>
 
               </NavLink>

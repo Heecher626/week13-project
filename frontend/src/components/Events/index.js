@@ -1,9 +1,10 @@
 import { Switch, Route } from "react-router-dom";
-
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getEvents } from "../../store/events";
 import EventLanding from "./EventLanding";
+import EventDetails from "./EventDetails";
+
 
 
 export default function Events(){
@@ -22,7 +23,9 @@ export default function Events(){
         <Route exact path='/events'>
           <EventLanding />
         </Route>
-
+        <Route path='/events/:eventId'>
+          <EventDetails />
+        </Route>
       </Switch>}
     </>
   );

@@ -20,10 +20,6 @@ const del = groupId => ({
   groupId
 })
 
-const create = group => ({
-  type: CREATE_GROUP,
-  group
-})
 
 export const getGroups = () => async dispatch => {
   let response = await csrfFetch('/api/groups')
@@ -66,7 +62,7 @@ export const createGroup = group => async dispatch => {
 
   const data = await response.json()
   dispatch(add(data))
-  console.log("🚀 ~ file: groups.js:70 ~ createGroup ~ data:", data)
+  //console.log("🚀 ~ file: groups.js:70 ~ createGroup ~ data:", data)
   return data
 }
 
@@ -104,7 +100,8 @@ const groupsReducer = (state = initialState, action) => {
 
     case (DELETE_GROUP):
       let updatedState = {...state}
-      delete state[action.groupId]
+      delete updatedState[action.groupId]
+      return updatedState
     default:
       return state
   }
