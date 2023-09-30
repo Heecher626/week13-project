@@ -42,6 +42,13 @@ export default function GroupDetails() {
     }
   })
 
+  pastEvents.sort((a, b) => {
+    if(a.startDate > b.startDate) return -1
+  })
+  futureEvents.sort((a, b) => {
+    if(a.startDate > b.startDate) return 1
+  })
+
 
 
   console.log('Past Events', pastEvents)
