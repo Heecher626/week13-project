@@ -37,19 +37,20 @@ router.get('/', async (req, res)=> {
       },
       {
         model: GroupImage
+      },
+      {
+        model: Event,
+        attributes: ['id']
       }
     ],
   })
 
   let groupList = []
 
-  await groups.forEach(async group => {
-    console.log('numEvents: ', await group.countEvents())
-    group.numEvents = await group.countEvents()
-  })
 
   groups.forEach(group => {
     groupList.push(group.toJSON())
+
   });
 
   groupList.forEach(group => {
@@ -72,6 +73,15 @@ router.get('/', async (req, res)=> {
       group.members = undefined
     }
 
+    let numEvents = 0;
+
+    group.Events.forEach(() => {
+      numEvents++
+    })
+
+    group.numEvents = numEvents
+    delete group.Events
+
     group.GroupImages.forEach(image => {
       if(image.preview == true){
         group.previewImage = image.url
@@ -81,7 +91,8 @@ router.get('/', async (req, res)=> {
     if(!group.previewImage) group.previewImage = "No preview image"
   })
 
-  res.json({Groups: groupList})
+  //console.log(`groupList[0].countEvents(): `, await groupList[0].countEvents())
+  await res.json({Groups: groupList})
 })
 
 router.get('/current', requireAuth, async (req, res) => {
@@ -135,6 +146,7 @@ router.get('/current', requireAuth, async (req, res) => {
     if(!group.previewImage) group.previewImage = "No preview image"
   })
 
+
   res.json({Groups: groupList})
 })
 
@@ -158,6 +170,9 @@ router.get('/:groupId', async (req, res) => {
       {
         model: Venue
       },
+      {
+        model: Event
+      }
     ],
   })
 
@@ -170,6 +185,14 @@ router.get('/:groupId', async (req, res) => {
 
   group.createdAt = formattedDate(group.createdAt)
   group.updatedAt = formattedDate(group.updatedAt)
+
+  let numEvents = 0
+
+  group.Events.forEach(() => numEvents++)
+
+  group.numEvents = numEvents
+
+  delete group.Events
 
   let memberCount = 0;
     if(!group.members.length){
@@ -199,7 +222,7 @@ router.get('/:groupId/events', async (req, res) => {
 
   const eventsList = await Event.findAll({
 
-    attributes: ['id', 'venueId', 'groupId', 'name', 'type','startDate','endDate'],
+    attributes: ['id', 'venueId', 'groupId', 'name', 'description', 'type','startDate','endDate'],
 
     include: [
       {

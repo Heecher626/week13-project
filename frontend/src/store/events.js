@@ -45,6 +45,15 @@ export const deleteEvent = (eventId) => async dispatch => {
   }
 }
 
+export const getEventsByGroup = (groupId) => async dispatch => {
+  let response = await csrfFetch(`/api/groups/${groupId}/events`)
+
+  if(response.ok){
+    let events = await response.json()
+    dispatch(load(events.Events))
+  }
+}
+
 export const createEvent = (event, groupId) => async dispatch => {
   let options = {
     method: 'POST',
@@ -66,7 +75,7 @@ const initialState = {}
 const eventsReducer = (state = initialState, action) => {
   switch(action.type){
     case(LOAD_EVENTS):
-      let newEvents = {}
+      let newEvents = {...state}
       action.events.forEach(event => {
         newEvents[event.id] = event
       })

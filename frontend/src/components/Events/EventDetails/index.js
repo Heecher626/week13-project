@@ -22,7 +22,12 @@ export default function EventDetails() {
 
   return (
     <div>
-      {event.price}
+      <div>
+        <NavLink to='/events'>Events</NavLink>
+        <h1>{event.name}</h1>
+        <h3>Hosted by </h3>
+      </div>
+
       <OpenModalButton
         buttonText={"Delete"}
         modalComponent={<DeleteEventModal event={event} />}
