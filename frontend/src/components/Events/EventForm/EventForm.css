@@ -1,0 +1,46 @@
+.event-form-container{
+  margin: 0% 25%
+}
+
+.event-form-container > form > div > h2{
+  font-size: medium
+}
+
+.top-border{
+  padding: 5px 0px;
+  margin: 5px 0px;
+  border-top: 1px solid grey;
+}
+
+.width-large{
+  width: 60%;
+}
+
+.width-medium{
+  width: 30%;
+}
+
+.width-small{
+  width: 20%;
+  background-color: rgb(197, 224, 241);
+}
+
+.price-box{
+  width: 10%;
+}
+
+.big-boy{
+  width: 100%;
+  height: 120px;
+  background-color: rgb(197, 224, 241);
+}
+
+#create-event-button{
+  padding: 8px;
+  font-size: medium;
+  color: white;
+  background-color: red;
+  box-shadow: 1px 1px 1px black;
+  width: 20%;
+}
+

@@ -301,8 +301,8 @@ const validateGroup = [
   }),
   check('about')
     .exists({ checkFalsy: true })
-    .isLength({ min: 50, max: 1000 })
-    .withMessage("About must be 50 characters or more"),
+    .isLength({ min: 30, max: 1000 })
+    .withMessage("About must be 30 characters or more"),
   check('private')
     .isBoolean()
     .withMessage("Private must be a boolean"),
@@ -537,7 +537,8 @@ const validateEvent = [
     .withMessage('Price is invalid'),
   check('description')
     .exists({checkFalsy: true})
-    .withMessage('Description is required'),
+    .isLength({min: 30, max: 1000})
+    .withMessage('Description must be 30 characters or more'),
   check('startDate')
     .exists({checkFalsy: true})
     .isAfter(Date(Date.now()))

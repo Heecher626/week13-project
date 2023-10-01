@@ -105,7 +105,7 @@ export const updateGroup = (group, groupId) => async dispatch => {
 
   const data = await response.json()
   dispatch(add(data))
-  return response
+  return data
 }
 
 const initialState = {};

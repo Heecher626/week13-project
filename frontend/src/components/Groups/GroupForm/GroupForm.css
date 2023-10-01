@@ -36,9 +36,6 @@ h2 {
   border-top: 1px solid grey;
 }
 
-textarea{
-  background-color: rgb(197, 224, 241);
-}
 input{
   background-color: rgb(197, 224, 241);
 }
@@ -58,6 +55,5 @@ input{
 
 #about-input{
   height: 120px;
-  padding: none;
-  text-align: start;
+  background-color: rgb(197, 224, 241);
 }

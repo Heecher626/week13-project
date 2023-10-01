@@ -69,6 +69,24 @@ export const createEvent = (event, groupId) => async dispatch => {
   return data
 }
 
+export const addEventImage = (eventId, url) => async dispatch => {
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      eventId,
+      url,
+      preview: true
+    })
+  }
+
+  await csrfFetch (`/api/events/${eventId}/images`, options)
+
+  dispatch(getOneEvent(eventId))
+}
+
 
 const initialState = {}
 

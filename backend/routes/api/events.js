@@ -525,7 +525,8 @@ const validateEvent = [
     .withMessage('Price is invalid'),
   check('description')
     .exists({checkFalsy: true})
-    .withMessage('Description is required'),
+    .isLength({min: 30, max: 1000})
+    .withMessage('Description must be 30 characters or more'),
   check('startDate')
     .exists({checkFalsy: true})
     .isAfter(Date(Date.now()))
