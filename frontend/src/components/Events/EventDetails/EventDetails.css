@@ -1,0 +1,99 @@
+.event-detail{
+  height: 100%;
+}
+
+.event-detail-heading{
+
+  padding: 50px 10% 0px;
+  height: 150px;
+}
+
+.event-detail-heading > h3{
+  font-size: medium;
+  color: grey;
+}
+
+.event-detail-body{
+  background-color: lightgray;
+  padding: 3% 10%
+}
+
+.event-detail-upper{
+  height: 400px;
+  display: flex;
+  justify-content: space-between;
+
+}
+
+.event-detail-upper > img{
+  width: 50%;
+}
+
+.event-detail-cards{
+  display: flex;
+  flex-direction: column;
+  width: 48%;
+  height: 100%;
+  justify-content: space-between;
+}
+
+.group-card{
+  box-sizing: border-box;
+  padding: 15px;
+  background-color: white;
+  display: flex;
+  height: 30%;
+  align-items: center;
+  border-radius: 12%;
+}
+
+.group-card > img{
+  height: 60%;
+  width: 30%;
+  margin-right: 12px;
+}
+
+.group-card > div > h2{
+  font-size: large;
+}
+
+.group-card > div > h3{
+  font-size: small;
+  color: grey;
+}
+
+.event-detail-lower{
+  height: 300px
+}
+
+.event-info-card{
+  box-sizing: border-box;
+  height: 65%;
+  background-color: white;
+  border-radius: 10%;
+  padding: 8%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.event-info-card > div{
+  display: flex;
+  align-items: center;
+  color: grey;
+}
+
+.event-times > div > div > span{
+  color: teal;
+}
+
+.event-info-card > div > i{
+  font-size: x-large;
+  color: grey;
+  margin-right: 10px;
+}
+
+.event-info-card > div > button {
+  justify-self: flex-end !important;
+}
