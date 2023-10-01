@@ -14,13 +14,20 @@ export default function GroupForm() {
   const [about, setAbout] = useState("");
   const [type, setType] = useState("In person");
   const [isPrivate, setIsPrivate] = useState(false);
-  const [preview, setPreview] = useState("")
+  const [preview, setPreview] = useState("");
   const [errors, setErrors] = useState({});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     let success = true;
     setErrors({});
+    if(preview){
+      if(!preview.endsWith('jpg') && !preview.endsWith('png')){
+        setErrors({preview: 'Image URL needs to end in jpg or png.'})
+        return
+      }
+    }
+
     let data = await dispatch(
       createGroup({
         city,
@@ -39,17 +46,19 @@ export default function GroupForm() {
     });
     if (success) {
       let groupId = data.id;
-      dispatch(addImageThunk( groupId, preview))
+      if(preview){
+        dispatch(addImageThunk(groupId, preview));
+      }
       history.push(`/groups/${groupId}`);
     }
   };
 
   return (
-    <>
+    <div className="group-form-container">
       <h1>BECOME AN ORGANIZER</h1>
       <h2>We'll walk you through a few steps to build your local community</h2>
       <form onSubmit={handleSubmit}>
-        <div>
+        <div className="top-border">
           <h2>First, set your group's location</h2>
           <h3>
             Meetup groups meet locally, in person and type. We'll connect you
@@ -63,7 +72,7 @@ export default function GroupForm() {
             required
           />
         </div>
-        {errors.city && <p>{errors.city}</p>}
+        {errors.city && <p className="errors">{errors.city}</p>}
         <div>
           <input
             type="text"
@@ -73,8 +82,9 @@ export default function GroupForm() {
             required
           />
         </div>
-        {errors.state && <p>{errors.state}</p>}
-        <div>
+
+        {errors.state && <p className="errors">{errors.state}</p>}
+        <div className="top-border">
           <h2>What will your group's name be?</h2>
           <h3>
             Choose a name that will give people a clear idea of what the group
@@ -89,8 +99,8 @@ export default function GroupForm() {
             required
           />
         </div>
-        {errors.name && <p>{errors.name}</p>}
-        <div>
+        {errors.name && <p className="errors">{errors.name}</p>}
+        <div className="top-border">
           <h2>Now describe what your group will be about</h2>
           <h3>
             People will see this when we promote your group, but you'll be able
@@ -101,26 +111,27 @@ export default function GroupForm() {
             <li>Who should join?</li>
             <li>What will you do at your events?</li>
           </ol>
-          <input
-            type="text"
+          <textarea
+            id="about-input"
+            type="textarea"
             value={about}
             placeholder="Please write at least 30 characters"
             onChange={(e) => setAbout(e.target.value)}
             required
           />
         </div>
-        {errors.about && <p>{errors.about}</p>}
+        {errors.about && <p className="errors">{errors.about}</p>}
 
-        <h2>Final steps...</h2>
 
-        <div>
+        <div className="top-border">
+          <h2>Final steps...</h2>
           <h3>Is this an in person or online group?</h3>
           <select onChange={(e) => setType(e.target.value)} required>
             <option value={"In person"}>In person</option>
             <option value={"Online"}>Online</option>
           </select>
         </div>
-        {errors.type && <p>{errors.type}</p>}
+        {errors.type && <p className="errors">{errors.type}</p>}
 
         <h3>Is this group private or public?</h3>
         <div>
@@ -129,23 +140,21 @@ export default function GroupForm() {
             <option value={true}>Private</option>
           </select>
         </div>
-        {errors.isPrivate && <p>{errors.isPrivate}</p>}
+        {errors.isPrivate && <p className="errors">{errors.isPrivate}</p>}
         <div>
-          <h3>
-            Please add an image url for your group below:
-          </h3>
+          <h3>Please add an image url for your group below:</h3>
           <input
             type="text"
             value={preview}
-            placeholder='Image Url'
+            placeholder="Image Url"
             onChange={(e) => setPreview(e.target.value)}
           />
         </div>
-        {errors.preview && (
-          <p>{errors.preview}</p>
-        )}
-        <button type="submit">Create Group</button>
+        {errors.preview && <p className="errors">{errors.preview}</p>}
+        <div className="top-border button-container">
+          <button type="submit" id="create-group-button">Create Group</button>
+        </div>
       </form>
-    </>
+    </div>
   );
 }

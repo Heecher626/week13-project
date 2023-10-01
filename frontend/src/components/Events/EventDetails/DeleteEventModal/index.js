@@ -15,11 +15,11 @@ export default function DeleteEventModal({event}){
   }
 
   return (
-    <div>
+    <div className="delete-modal">
       <h1>Confirm Delete</h1>
       <h2>Are you sure you want to remove this event?</h2>
-      <button onClick={handleDelete}>Yes (Delete Event)</button>
-      <button onClick={closeModal}>No (Keep Event)</button>
+      <button onClick={handleDelete} className="confirm-delete">Yes (Delete Event)</button>
+      <button onClick={closeModal} className="no-delete">No (Keep Event)</button>
     </div>
   )
 }
