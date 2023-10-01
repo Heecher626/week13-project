@@ -66,6 +66,10 @@ export const createGroup = group => async dispatch => {
   return data
 }
 
+export const addImage = (groupId, url) => async dispatch => {
+  
+}
+
 export const updateGroup = (group, groupId) => async dispatch => {
   let options = {
     method: 'PUT',

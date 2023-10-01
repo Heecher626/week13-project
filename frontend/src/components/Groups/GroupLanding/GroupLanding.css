@@ -9,7 +9,31 @@
 
 .links{
   display: flex;
-  margin: 20px
+  flex-direction: column;
+  align-items: left;
+  justify-content: flex-start;
+  margin: 20px;
+}
+
+.events-link{
+  color: black;
+  text-decoration: none;
+  font-size: xx-large;
+}
+
+.links > span > span{
+  font-size: xx-large;
+  color: rgb(81, 166, 199);
+  text-decoration: underline;
+}
+
+.links > h1{
+  font-size: large;
+  color: gray;
+}
+
+.group > *:hover{
+  text-decoration: none;
 }
 
 .group-box {
@@ -19,13 +43,19 @@
   flex-direction: column;
   flex-wrap: wrap;
   width: 100%;
+
+}
+
+.group {
+  width: 100%;
 }
 
 .group > *{
   display: flex;
   border-top: 1px solid grey;
-  width: 100%
-
+  padding: 10px 0px;
+  width: 100%;
+  color: black;
 }
 
 .group > * > div {
@@ -33,12 +63,19 @@
   flex-wrap: wrap;
   flex-direction: column;
   justify-content: center;
-  width: 60%
+  width: 60%;
+  margin-left: 30px;
 
 }
 
+.group > * > div > * {
+  text-wrap: wrap;
+}
+
 .group > * > img {
-  width: 40%
+  width: 40%;
+  max-width: 280px;
+  max-height: 220px;
 }
 
 p {

@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import * as sessionActions from '../../../store/session';
 import './ProfileButton.css'
 import { useHistory } from "react-router-dom/cjs/react-router-dom";
+import { NavLink } from "react-router-dom/cjs/react-router-dom.min";
 
 function ProfileButton({ user }) {
   const history = useHistory()
@@ -45,11 +46,11 @@ function ProfileButton({ user }) {
         <i className="fas fa-user-circle" />
       </button>
       <ul className={ulClassName} hidden={showMenu ? false : true} ref={ulRef}>
-        {/* <li>{user.username}</li> */}
         <li>Hello {user.firstName}</li>
         <li>email: {user.email}</li>
+        <li><NavLink to='/groups'>View groups</NavLink></li>
         <li>
-          <button onClick={logout}>Log Out</button>
+          <button onClick={logout} id="logout-button">Log Out</button>
         </li>
       </ul>
     </>

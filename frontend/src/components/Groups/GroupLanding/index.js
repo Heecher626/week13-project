@@ -11,8 +11,8 @@ export function GroupLanding() {
   return(
     <div className="group-landing-container">
       <div className="links">
-        <NavLink to='/events'>Events</NavLink>
-        <span>Groups</span>
+        <span><NavLink to='/events' className='events-link'>Events  </NavLink><span>  Groups</span></span>
+        <h1>Groups in Meetup</h1>
       </div>
 
       <div className="group-box">
@@ -22,7 +22,7 @@ export function GroupLanding() {
           return (
             <div key={element[1].id} className="group">
               <NavLink to={`/groups/${element[1].id}`}>
-              <img src='https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg'/>
+              <img src={element.previewImage !== "No preview image" ? 'https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg' : element.previewImage}/>
               <div>
 
 
