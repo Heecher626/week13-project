@@ -1,26 +1,124 @@
 .group-details-container {
   display: flex;
   flex-direction: column;
-  margin: 8%;
+
   flex-wrap: wrap;
-  align-items: center;
+
 }
+
 
 .upper-container {
   display: flex;
-  width: 100%
+  width: 80%;
+  margin: 10% 13% 4%;
 }
 
-.text-details {
+.text-details{
+  max-width: 500px;
   width: 50%;
   padding-left: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+}
+
+.text-details > h1 {
+  margin: 10px 0 0 0;
+  font-size: xx-large;
+  padding-right: 5000px;
+}
+
+.text-details > *{
+  text-wrap: wrap;
+  overflow-wrap: normal;
 }
 
 .buttons-container{
   display: flex;
+  width: 60%;
+  justify-content: space-around;
 }
 
-img {
+.buttons-container > button {
+  background-color: darkgray;
+  color: white;
+  box-shadow: 1px 1px 1px 1px black;
+  margin-bottom: 10px;
+}
+.buttons-container > button:hover {
+  background-color: red;
+  box-shadow: 2px 2px 1px 1px black;
+}
+
+.buttons-container > * > button {
+  background-color: darkgray;
+  color: white;
+  box-shadow: 1px 1px 1px 1px black;
+}
+
+.buttons-container > * > button:hover {
+  background-color: red;
+  box-shadow: 2px 2px 1px 1px black;
+}
+
+.join-button {
+  padding: 10px 30px;
+  font-size: larger;
+  color: white;
+  background-color: red;
+  box-shadow: 1px 1px 1px black;
+}
+
+.group-image-container{
   width: 50%;
+}
+
+.group-image-container > img {
+  width: 100%;
   border: 1px solid black
+}
+
+.lower-container{
+  background-color: lightgray;
+  padding: 0% 13%;
+}
+
+.event-card > div{
+  background-color: white;
+  padding: 5%;
+  border-radius: 10%;
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+  height: 200px;
+  margin: 10px 0px;
+
+}
+
+.event-card-upper{
+  /* width: 30%; */
+  display: flex;
+}
+
+.event-card-upper > img {
+  width: 30%;
+  margin-right: 10px;
+}
+
+.event-card-upper > div > *{
+  color: black;
+}
+
+.event-card-upper > div > *:hover {
+  text-decoration: none;
+}
+
+.event-card-description {
+  padding-top: 5%;
+  color: black;
+}
+
+.event-card-description:hover {
+  text-decoration: none;
 }

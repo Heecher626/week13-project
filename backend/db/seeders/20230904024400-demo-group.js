@@ -22,8 +22,26 @@ module.exports = {
   options.tableName = 'Groups'
    await queryInterface.bulkInsert(options, [{
     organizerId: 1,
-    name: 'group1',
-    about: 'This is a group',
+    name: 'Penguin lovers society',
+    about: 'Come together and share your love of penguins with us! A super friendly group of cute flightless bird lovers!',
+    type: 'Online',
+    private: true,
+    city: 'Boston',
+    state: 'Massachusetts',
+   },
+   {
+    organizerId: 1,
+    name: 'Penguin haters society',
+    about: 'Come together and share your hate of penguins with us! A super mean group of ugly flightless bird haters!',
+    type: 'Online',
+    private: true,
+    city: 'Boston',
+    state: 'Massachusetts',
+   },
+   {
+    organizerId: 1,
+    name: 'Society of people neutral on penguins',
+    about: 'Come together and share your indifference of penguins with us! A super boring group of people that don\'t really care about flightless birds!',
     type: 'Online',
     private: true,
     city: 'Boston',
@@ -41,8 +59,8 @@ module.exports = {
     options.tableName = 'Groups'
     const Op = Sequelize.Op
     await queryInterface.bulkDelete(options, {
-      name: {
-        [Op.in]: ['group1']
+      organizerId: {
+        [Op.in]: [1]
       }
     }, {})
   }

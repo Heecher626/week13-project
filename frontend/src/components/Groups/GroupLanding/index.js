@@ -18,11 +18,22 @@ export function GroupLanding() {
       <div className="group-box">
 
         {Object.entries(groups).map((element) => {
-
+          let preview = null
+          if(element[1].GroupImages){
+            element[1].GroupImages.forEach(element => {
+              if(element.preview){
+                console.log('element.preview?', element.preview)
+                preview = element.url
+              }
+            });
+            if(preview === null) preview = 'https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg'
+          } else {
+            preview = element[1].previewImage == "No preview image" ? 'https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg' : element[1].previewImage
+          }
           return (
             <div key={element[1].id} className="group">
               <NavLink to={`/groups/${element[1].id}`}>
-              <img src={element.previewImage !== "No preview image" ? 'https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg' : element.previewImage}/>
+              <img src={preview}/>
               <div>
 
 
