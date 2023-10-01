@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { createGroup } from "../../../store/groups";
+import { createGroup, addImageThunk } from "../../../store/groups";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+
 import "./GroupForm.css";
 
 export default function GroupForm() {
@@ -13,6 +14,7 @@ export default function GroupForm() {
   const [about, setAbout] = useState("");
   const [type, setType] = useState("In person");
   const [isPrivate, setIsPrivate] = useState(false);
+  const [preview, setPreview] = useState("")
   const [errors, setErrors] = useState({});
 
   const handleSubmit = async (e) => {
@@ -37,6 +39,7 @@ export default function GroupForm() {
     });
     if (success) {
       let groupId = data.id;
+      dispatch(addImageThunk( groupId, preview))
       history.push(`/groups/${groupId}`);
     }
   };
@@ -81,6 +84,7 @@ export default function GroupForm() {
           <input
             type="text"
             value={name}
+            placeholder="What is your group name?"
             onChange={(e) => setName(e.target.value)}
             required
           />
@@ -126,20 +130,20 @@ export default function GroupForm() {
           </select>
         </div>
         {errors.isPrivate && <p>{errors.isPrivate}</p>}
-        {/* <div>
+        <div>
           <h3>
             Please add an image url for your group below:
           </h3>
           <input
             type="text"
-            value={isPrivate}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
+            value={preview}
+            placeholder='Image Url'
+            onChange={(e) => setPreview(e.target.value)}
           />
         </div>
-        {errors.confirmPassword && (
-          <p>{errors.confirmPassword}</p>
-        )}*/}
+        {errors.preview && (
+          <p>{errors.preview}</p>
+        )}
         <button type="submit">Create Group</button>
       </form>
     </>

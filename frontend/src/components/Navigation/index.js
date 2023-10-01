@@ -14,7 +14,7 @@ function Navigation({ isLoaded }) {
   if (sessionUser) {
     sessionLinks = (
       <div className='sessionContainer'>
-        <NavLink to='/groups/new'>
+        <NavLink to='/groups/new' className='new-group-button'>
           Start a new group
         </NavLink>
         <div>
