@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getGroups } from "../../store/groups";
 import GroupForm from "./GroupForm";
 import GroupUpdate from "./GroupUpdate";
+import EventForm from "../Events/EventForm";
 
 
 export default function Groups(){
@@ -21,6 +22,9 @@ export default function Groups(){
       {isLoaded && <Switch>
         <Route exact path='/groups'>
           <GroupLanding />
+        </Route>
+        <Route path='/groups/:groupId/events/new'>
+          <EventForm />
         </Route>
         <Route exact path='/groups/new'>
           <GroupForm />

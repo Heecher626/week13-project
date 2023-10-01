@@ -21,9 +21,14 @@ module.exports = {
    options.tableName = 'EventImages'
    await queryInterface.bulkInsert(options, [{
     eventId: 1,
-    url: 'temp',
+    url: 'https://media.istockphoto.com/id/535262557/photo/3d-penguin-takes-a-photo.jpg?s=1024x1024&w=is&k=20&c=IfDhjQqkGRIiIQF7Qq9yy3bQOG9NW3Gy619k-0blP90=',
     preview: true
-   }], {validate: true})
+   },
+  {
+    eventId: 2,
+    url: 'https://ih1.redbubble.net/image.1716380381.1766/st,small,507x507-pad,600x600,f8f8f8.jpg',
+    preview: true
+  }], {validate: true})
   },
 
   async down (queryInterface, Sequelize) {

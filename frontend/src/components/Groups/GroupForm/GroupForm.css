@@ -1,0 +1,59 @@
+
+.group-form-container{
+  margin: 0% 10%
+}
+
+.group-form-container > h1{
+  color: teal;
+  font-size:medium;
+  margin: 10px 0px 0px;
+}
+
+.group-form-container > form > div > *{
+  width: 60%;
+}
+
+.group-form-container > form > div > h3{
+  font-size: small;
+}
+
+.group-form-container > form > div > select{
+  width: 20%;
+  background-color: rgb(197, 224, 241);
+}
+
+.group-form-container > form > div > input{
+  width: 40%;
+}
+
+h2 {
+  margin: none
+}
+
+.top-border{
+  padding: 5px 0px;
+  margin: 5px 0px;
+  border-top: 1px solid grey;
+}
+
+input{
+  background-color: rgb(197, 224, 241);
+}
+
+.button-container > *{
+  width: 40%;
+}
+
+#create-group-button{
+  padding: 8px;
+  font-size: medium;
+  color: white;
+  background-color: red;
+  box-shadow: 1px 1px 1px black;
+  width: 20%;
+}
+
+#about-input{
+  height: 120px;
+  background-color: rgb(197, 224, 241);
+}

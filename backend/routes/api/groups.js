@@ -37,19 +37,26 @@ router.get('/', async (req, res)=> {
       },
       {
         model: GroupImage
+      },
+      {
+        model: Event,
+        attributes: ['id']
       }
     ],
   })
 
   let groupList = []
 
+
   groups.forEach(group => {
     groupList.push(group.toJSON())
+
   });
 
   groupList.forEach(group => {
     group.createdAt = formattedDate(group.createdAt)
     group.updatedAt = formattedDate(group.updatedAt)
+
 
     let memberCount = 0;
     if(!group.members.length){
@@ -66,6 +73,15 @@ router.get('/', async (req, res)=> {
       group.members = undefined
     }
 
+    let numEvents = 0;
+
+    group.Events.forEach(() => {
+      numEvents++
+    })
+
+    group.numEvents = numEvents
+    delete group.Events
+
     group.GroupImages.forEach(image => {
       if(image.preview == true){
         group.previewImage = image.url
@@ -75,7 +91,8 @@ router.get('/', async (req, res)=> {
     if(!group.previewImage) group.previewImage = "No preview image"
   })
 
-  res.json({Groups: groupList})
+  //console.log(`groupList[0].countEvents(): `, await groupList[0].countEvents())
+  await res.json({Groups: groupList})
 })
 
 router.get('/current', requireAuth, async (req, res) => {
@@ -129,6 +146,7 @@ router.get('/current', requireAuth, async (req, res) => {
     if(!group.previewImage) group.previewImage = "No preview image"
   })
 
+
   res.json({Groups: groupList})
 })
 
@@ -152,6 +170,9 @@ router.get('/:groupId', async (req, res) => {
       {
         model: Venue
       },
+      {
+        model: Event
+      }
     ],
   })
 
@@ -164,6 +185,14 @@ router.get('/:groupId', async (req, res) => {
 
   group.createdAt = formattedDate(group.createdAt)
   group.updatedAt = formattedDate(group.updatedAt)
+
+  let numEvents = 0
+
+  group.Events.forEach(() => numEvents++)
+
+  group.numEvents = numEvents
+
+  delete group.Events
 
   let memberCount = 0;
     if(!group.members.length){
@@ -193,7 +222,7 @@ router.get('/:groupId/events', async (req, res) => {
 
   const eventsList = await Event.findAll({
 
-    attributes: ['id', 'venueId', 'groupId', 'name', 'type','startDate','endDate'],
+    attributes: ['id', 'venueId', 'groupId', 'name', 'description', 'type','startDate','endDate'],
 
     include: [
       {
@@ -272,8 +301,8 @@ const validateGroup = [
   }),
   check('about')
     .exists({ checkFalsy: true })
-    .isLength({ min: 50, max: 1000 })
-    .withMessage("About must be 50 characters or more"),
+    .isLength({ min: 30, max: 1000 })
+    .withMessage("About must be 30 characters or more"),
   check('private')
     .isBoolean()
     .withMessage("Private must be a boolean"),
@@ -508,7 +537,8 @@ const validateEvent = [
     .withMessage('Price is invalid'),
   check('description')
     .exists({checkFalsy: true})
-    .withMessage('Description is required'),
+    .isLength({min: 30, max: 1000})
+    .withMessage('Description must be 30 characters or more'),
   check('startDate')
     .exists({checkFalsy: true})
     .isAfter(Date(Date.now()))

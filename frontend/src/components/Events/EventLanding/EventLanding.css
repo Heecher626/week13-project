@@ -1,4 +1,4 @@
-.group-landing-container {
+.event-landing-container {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -6,7 +6,7 @@
   width: 60%
 }
 
-.links{
+.event-list-header{
   display: flex;
   flex-direction: column;
   align-items: left;
@@ -14,69 +14,69 @@
   margin: 20px;
 }
 
-.events-link{
+
+
+.groups-link{
   color: black;
   text-decoration: none;
   font-size: xx-large;
 }
 
-.links > span > span{
+.event-list-header > span > span{
   font-size: xx-large;
   color: rgb(81, 166, 199);
   text-decoration: underline;
 }
 
-.links > h1{
+.event-list-header > h1{
   font-size: large;
   color: gray;
 }
 
-.group > *:hover{
-  text-decoration: none;
-}
-
-.group-box {
+.events-box {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   flex-wrap: wrap;
   width: 100%;
-
 }
 
-.group {
+.landing-event-card{
   width: 100%;
 }
 
-.group > *{
-  display: flex;
-  border-top: 1px solid grey;
+.landing-event-card:hover{
+  text-decoration: none;
+}
+
+.landing-event-card > div{
   padding: 10px 0px;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+
+  margin: 10px 0px;
+  color: black;
+
+  border-top: 1px solid grey;
+}
+
+.landing-event-card-upper{
+  display: flex;
+  max-height: 200px;
+}
+
+.landing-event-card-upper > img {
+  width: 30%;
+  margin-right: 10px;
+}
+
+.landing-event-card-description {
+  padding-top: 5%;
   color: black;
 }
 
-.group > * > div {
-  display:flex;
-  flex-wrap: wrap;
-  flex-direction: column;
-  justify-content: center;
-  width: 60%;
-  margin-left: 30px;
-
-}
-
-.group > * > div > * {
-  text-wrap: wrap;
-}
-
-.group > * > img {
-  width: 40%;
-  max-width: 280px;
-  max-height: 220px;
-}
-
-p {
-  font-size: small;
+.landing-event-card-description:hover {
+  text-decoration: none;
 }

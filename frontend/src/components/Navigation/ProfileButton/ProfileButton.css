@@ -3,6 +3,7 @@
   flex-direction: column;
   align-items: center;
   position: absolute;
+  justify-content: space-around;
   z-index: 2;
   direction: rtl;
   right: 0;
@@ -12,12 +13,14 @@
   background-color: lightgray;
   margin: 0;
   padding: 5px;
-  width: 150px;
+  min-width: 150px;
   height: 90px;
 }
 .hidden{
   display: none;
 }
+
+
 
 #logout-button{
   background: none!important;

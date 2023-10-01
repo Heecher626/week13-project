@@ -19,10 +19,12 @@
 .links-container {
   display: flex;
   justify-content: center;
+  height: 30%;
 }
 
 .link-box {
   width: 30%;
+  height: 30%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -30,5 +32,34 @@
 }
 
 .link-box > img{
-  height: 80%;
+  height: 150px;
+  width: 150px;
+}
+
+.landing-middle {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 10%;
+}
+
+.landing-middle > p{
+  text-align: center;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.sign-up-button-div > *{
+ margin-top: 30px;
+ padding: 10px 20px;
+ font-size: large;
+ background-color: rgba(22, 76,102, 0.63);
+ box-shadow: 2px 2px black;
 }
