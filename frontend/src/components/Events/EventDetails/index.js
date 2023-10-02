@@ -15,6 +15,10 @@ export default function EventDetails() {
   const event = useSelector((state) => state.events[eventId]);
   const allGroups = useSelector((state) => state.groups);
 
+  const updateButton = () => {
+    alert("Feature Coming soon...");
+  };
+
   useEffect(() => {
     dispatch(getOneEvent(eventId))
       .then(() => dispatch(getOneGroup(event.groupId)))
@@ -62,26 +66,28 @@ export default function EventDetails() {
         <div className="event-detail-upper">
           <img src={eventPreview} />
           <div className="event-detail-cards">
-            <div className="group-card">
+          <NavLink to={`/groups/${group.id}`} className="group-card">
+
               <img src={groupPreview} />
               <div>
                 <h2>{group.name}</h2>
                 <h3>{group.private ? "Private" : "Public"}</h3>
               </div>
-            </div>
+
+          </NavLink>
             <div className="event-info-card">
               <div className="event-times">
                 <i class="fa-sharp fa-solid fa-clock"></i>
                 <div>
                   <div>
-                    START{" "}
-                    <span>
+                    <div>START{" "}</div>
+                    <span className="time-span">
                       {splitStart[0]} · {splitStart[1]}
                     </span>
                   </div>
                   <div>
-                    END{" "}
-                    <span>
+                    <div>END{" "}</div>
+                    <span className="time-span">
                       {splitEnd[0]} · {splitEnd[1]}
                     </span>
                   </div>
@@ -89,22 +95,27 @@ export default function EventDetails() {
               </div>
               <div>
                 <i class="fa-solid fa-dollar-sign"></i>
-                <div>{event.price > 0 ? event.price.toFixed(2) : "FREE"}</div>
+                <div>{event.price > 0 ? `$${event.price.toFixed(2)}` : "FREE"}</div>
               </div>
-              <div>
+              <div className="map-container">
+
                 <i class="fa-solid fa-map-pin"></i>
                 <div>{event.type}</div>
-                <OpenModalButton
-                  buttonText={"Delete"}
-                  modalComponent={<DeleteEventModal event={event} />}
-                />
+
+                <div className="button-container">
+                  <button onClick={updateButton}>Update</button>
+                  <OpenModalButton
+                    buttonText={"Delete"}
+                    modalComponent={<DeleteEventModal event={event} />}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         <div className="event-detail-lower">
-          <h1>Details</h1>
+          <h1>Description</h1>
           <h3>{event.description}</h3>
         </div>
       </div>

@@ -45,6 +45,11 @@
   height: 30%;
   align-items: center;
   border-radius: 12%;
+  color: black;
+}
+
+.group-card:hover{
+  text-decoration: none;
 }
 
 .group-card > img{
@@ -86,6 +91,21 @@
 
 .event-times > div > div > span{
   color: teal;
+  width: 100%
+}
+
+.event-times{
+  width: 100%
+}
+
+.event-times > div> div{
+  display: flex;
+}
+
+
+.event-times > div> div > div{
+  width: 30%;
+  margin-right: 5px;
 }
 
 .event-info-card > div > i{
@@ -94,6 +114,27 @@
   margin-right: 10px;
 }
 
-.event-info-card > div > button {
-  justify-self: flex-end !important;
+.button-container{
+  margin-left: 30%;
+  display: flex;
+  width: 60%;
+  justify-content: space-between;
+}
+
+.button-container > button{
+  background-color: darkgray;
+  color: white;
+  box-shadow: 1px 1px 1px 1px black;
+  padding: 5%;
+  width: 40%;
+}
+
+.button-container > button:hover{
+  background-color: red;
+  box-shadow: 2px 2px 1px 1px black;
+}
+
+.time-span{
+  width: 100%;
+  text-wrap: nowrap;
 }
